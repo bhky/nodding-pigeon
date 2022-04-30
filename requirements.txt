@@ -1,3 +1,4 @@
+gdown>=4.2.0
 mediapipe>=0.8.9.1
 numpy>=1.22.0
 opencv-python>=4.0.0.0
