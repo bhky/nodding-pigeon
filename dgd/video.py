@@ -41,6 +41,7 @@ def video_to_landmarks(
                 continue
 
             detection = result.detections[0]
+
             right_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EYE)
             left_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EYE)
             nose_tip_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.NOSE_TIP)
@@ -48,13 +49,23 @@ def video_to_landmarks(
             right_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EAR_TRAGION)
             left_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EAR_TRAGION)
 
+            face_box_rel = detection.location_data.relative_bounding_box
+            x_min = max(0.0, face_box_rel.xmin)
+            y_min = max(0.0, face_box_rel.ymin)
+
+            def scale_x(x: float) -> float:
+                return (x - x_min) / (face_box_rel.width + 1e-08)
+
+            def scale_y(y: float) -> float:
+                return (y - y_min) / (face_box_rel.height + 1e-08)
+
             landmarks.append(
-                [right_eye_rel.x, right_eye_rel.y,
-                 left_eye_rel.x, left_eye_rel.y,
-                 nose_tip_rel.x, nose_tip_rel.y,
-                 mouth_center_rel.x, mouth_center_rel.y,
-                 right_ear_rel.x, right_eye_rel.y,
-                 left_ear_rel.x, left_eye_rel.y]
+                [scale_x(right_eye_rel.x), scale_y(right_eye_rel.y),
+                 scale_x(left_eye_rel.x), scale_y(left_eye_rel.y),
+                 scale_x(nose_tip_rel.x), scale_y(nose_tip_rel.y),
+                 scale_x(mouth_center_rel.x), scale_y(mouth_center_rel.y),
+                 scale_x(right_ear_rel.x), scale_y(right_eye_rel.y),
+                 scale_x(left_ear_rel.x), scale_y(left_eye_rel.y)]
             )
 
             valid_frame_count += 1
@@ -71,8 +82,8 @@ def video_to_landmarks(
                     line_thickness, cv2.LINE_AA  # pylint: disable=no-member
                 )
                 cv2.imshow(  # pylint: disable=no-member
-                    "Video",
-                    cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR) # pylint: disable=no-member
+                    "Webcam",
+                    cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
                 )
 
                 if cv2.waitKey(1) == ord("q"):
@@ -85,3 +96,7 @@ def video_to_landmarks(
     cap.release()
     cv2.destroyAllWindows()
     return landmarks
+
+
+# if __name__ == "__main__":
+#     video_to_landmarks(None, None)
