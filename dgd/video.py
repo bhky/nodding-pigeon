@@ -59,20 +59,21 @@ def video_to_landmarks(
 
             if video_path == 0:
                 mp_drawing.draw_detection(frame, detection)
+                flipped_frame = cv2.flip(frame, 1)  # pylint: disable=no-member
 
                 text = f"{valid_frame_count} / {max_num_frames}"
                 cv2.putText(  # pylint: disable=no-member
-                    frame, text, (10, 20),
+                    flipped_frame, text, (10, 20),
                     cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
                     font_scale, (0, 0, 255),
                     line_thickness, cv2.LINE_AA  # pylint: disable=no-member
                 )
                 cv2.imshow(  # pylint: disable=no-member
                     "Video",
-                    cv2.flip(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR), 1)  # pylint: disable=no-member
+                    cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR) # pylint: disable=no-member
                 )
 
-                if cv2.waitKey(1) == ord('q'):
+                if cv2.waitKey(1) == ord("q"):
                     break
 
     if padding and max_num_frames and len(landmarks) < max_num_frames:
