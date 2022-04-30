@@ -1,0 +1,10 @@
+__pycache__
+.idea
+.mypy_cache
+venv/
+*.zip
+build/
+tmp/
+scripts/
+dist/
+dgd.egg-info/
