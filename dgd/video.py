@@ -8,10 +8,14 @@ from mediapipe.python.solutions import face_detection as mp_face
 
 
 def video_to_landmarks(
-        video_path: str,
+        video_path: Optional[str],
         max_num_frames: Optional[int] = None,
         padding: bool = True
 ) -> List[List[float]]:
+    video_path = video_path if video_path else 0  # For 0, webcam will be used.
+    font_scale = 0.6
+    line_thickness = 1
+
     valid_frame_count = 0
     landmarks: List[List[float]] = []
     cap = cv2.VideoCapture(video_path)
@@ -21,8 +25,9 @@ def video_to_landmarks(
         while cap.isOpened():
             ret, bgr_frame = cap.read()
             if not ret:
-                # End of video.
-                break
+                if video_path == 0:
+                    continue  # Ignore empty frame of webcam.
+                break  # End of given video.
             if max_num_frames and valid_frame_count >= max_num_frames:
                 break
 
@@ -51,9 +56,25 @@ def video_to_landmarks(
 
             valid_frame_count += 1
 
+            text = f"{valid_frame_count} / {max_num_frames}"
+            cv2.putText(  # pylint: disable=no-member
+                frame, text, (10, 20),
+                cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
+                font_scale, (0, 0, 255),
+                line_thickness, cv2.LINE_AA  # pylint: disable=no-member
+            )
+            cv2.imshow(    # pylint: disable=no-member
+                "Video",
+                cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
+            )
+
+            if video_path == 0 and cv2.waitKey(1) == ord('q'):
+                break
+
     if padding and max_num_frames and len(landmarks) < max_num_frames:
         zeros = [0.0] * 12
         landmarks = landmarks + [zeros] * (max_num_frames - len(landmarks))
 
     cap.release()
+    cv2.destroyAllWindows()
     return landmarks
