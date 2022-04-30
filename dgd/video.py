@@ -7,10 +7,12 @@ import cv2
 from mediapipe.python.solutions import face_detection as mp_face
 from mediapipe.python.solutions import drawing_utils as mp_drawing
 
+from dgd.config import Config
+
 
 def video_to_landmarks(
         video_path: Optional[str],
-        max_num_frames: Optional[int] = None,
+        max_num_frames: Optional[int] = Config.seq_length,
         padding: bool = True
 ) -> List[List[float]]:
     video_path = video_path if video_path else 0  # For 0, webcam will be used.

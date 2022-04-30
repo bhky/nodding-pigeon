@@ -9,6 +9,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
+from dgd.config import Config
+
 
 def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
     loaded = np.load(npz_file_path)
@@ -78,17 +80,10 @@ def train_and_save_model(
 
 
 def main() -> None:
-    npz_file_path = "landmarks.npz"
-    seq_length = 300  # That means the number of frames per "clip".
-    num_features = 12  # From Mediapipe face detection.
-    num_classes = 3
-    model_path = "dgd_model.h5"
-
-    landmark_dict = load_landmarks(npz_file_path)
-    ds_train = make_ds_train(landmark_dict, seq_length, num_features)
-    model = make_model(seq_length, num_features, num_classes)
-
-    train_and_save_model(ds_train, model, model_path)
+    landmark_dict = load_landmarks(Config.npz_file_path)
+    ds_train = make_ds_train(landmark_dict, Config.seq_length, Config.num_features)
+    model = make_model(Config.seq_length, Config.num_features, Config.num_classes)
+    train_and_save_model(ds_train, model, Config.model_path)
 
 
 if __name__ == "__main__":
