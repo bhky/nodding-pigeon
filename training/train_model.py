@@ -78,7 +78,7 @@ def train_and_save_model(
 
 
 def main() -> None:
-    npz_file_path = ""
+    npz_file_path = "landmarks.npz"
     seq_length = 300  # That means the number of frames per "clip".
     num_features = 12  # From Mediapipe face detection.
     num_classes = 3

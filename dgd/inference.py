@@ -27,6 +27,5 @@ def predict_video(
     if model is None:
         model = load_model()
     landmarks = video_to_landmarks(video_path, max_num_frames, padding)
-    ds = tf.data.Dataset.from_tensor_slices([landmarks])
-    prediction: Sequence[float] = model.predict(ds)[0]
+    prediction: Sequence[float] = model.predict([landmarks])[0]
     return prediction

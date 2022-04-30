@@ -18,7 +18,7 @@ def video_to_landmarks(
 
     valid_frame_count = 0
     landmarks: List[List[float]] = []
-    cap = cv2.VideoCapture(video_path)
+    cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
     with mp_face.FaceDetection(model_selection=0,
                                min_detection_confidence=0.5) as face_detection:
 
@@ -31,7 +31,7 @@ def video_to_landmarks(
             if max_num_frames and valid_frame_count >= max_num_frames:
                 break
 
-            frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
             result = face_detection.process(frame)
 
             if not result or not result.detections or len(result.detections) != 1:
@@ -63,7 +63,7 @@ def video_to_landmarks(
                 font_scale, (0, 0, 255),
                 line_thickness, cv2.LINE_AA  # pylint: disable=no-member
             )
-            cv2.imshow(    # pylint: disable=no-member
+            cv2.imshow(  # pylint: disable=no-member
                 "Video",
                 cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
             )
