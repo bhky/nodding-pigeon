@@ -1,6 +1,7 @@
 """
 Train model for classifying landmark movements.
 """
+import os
 from typing import Dict, List
 
 import numpy as np
@@ -10,6 +11,16 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
 from dgd.config import Config
+
+tf.random.set_seed(0)
+
+
+def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    # Strategy for GPU or multi-GPU machines.
+    strategy = tf.distribute.MirroredStrategy()
+    print(f"Number of accelerators: {strategy.num_replicas_in_sync}")
+    return strategy
 
 
 def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
@@ -51,6 +62,12 @@ def make_model(
     x = layers.LSTM(32, return_sequences=True)(seq_input)
     output = layers.Dense(num_classes, activation="softmax", name="output")(x)
     model = Model(seq_input, output)
+
+    model.compile(
+        loss="categorical_crossentropy",
+        optimizer=tf.keras.optimizers.Adam(),
+        metrics=["acc"]
+    )
     return model
 
 
@@ -75,14 +92,22 @@ def train_and_save_model(
         ds_train,
         epochs=500,
         callbacks=callbacks,
-        verbose=2,
+        verbose=1,
     )
 
 
 def main() -> None:
     landmark_dict = load_landmarks(Config.npz_file_path)
-    ds_train = make_ds_train(landmark_dict, Config.seq_length, Config.num_features)
-    model = make_model(Config.seq_length, Config.num_features, Config.num_classes)
+    ds_train = make_ds_train(
+        landmark_dict, Config.seq_length, Config.num_features
+    )
+
+    strategy = setup_accelerators_and_get_strategy()
+    with strategy.scope():
+        model = make_model(
+            Config.seq_length, Config.num_features, Config.num_classes
+        )
+
     train_and_save_model(ds_train, model, Config.model_path)
 
 
