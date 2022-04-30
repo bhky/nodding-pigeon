@@ -15,7 +15,7 @@ def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
     return {name: loaded[name].tolist() for name in loaded.files}
 
 
-def make_ds(
+def make_ds_train(
         landmark_dict: Dict[str, List[List[float]]],
         seq_length: int,
         num_features: int
@@ -29,13 +29,12 @@ def make_ds(
         idx = rng.integers(len(landmarks) - seq_length, size=seq_length)
         yield landmarks[idx: idx + seq_length]
 
-    ds = tf.data.Dataset.from_generator(
+    return tf.data.Dataset.from_generator(
         gen,
         output_signature=tf.TensorSpec(
             shape=(seq_length, num_features), dtype=tf.float32
         )
     )
-    return ds
 
 
 def make_model(
@@ -54,11 +53,11 @@ def make_model(
 
 
 def train_and_save_model(
-        ds: tf.data.Dataset,
+        ds_train: tf.data.Dataset,
         model: Model,
         weights_path: str
 ) -> None:
-    ds = ds.batch(32).prefetch(tf.data.AUTOTUNE)
+    ds_train = ds_train.batch(32).prefetch(tf.data.AUTOTUNE)
 
     callbacks = [
         ModelCheckpoint(
@@ -71,7 +70,7 @@ def train_and_save_model(
         ),
     ]
     model.fit(
-        ds,
+        ds_train,
         epochs=500,
         callbacks=callbacks,
         verbose=2,
@@ -80,16 +79,16 @@ def train_and_save_model(
 
 def main() -> None:
     npz_file_path = ""
-    seq_length = 300  # That means 300 frames here.
+    seq_length = 300  # That means the number of frames per "clip".
     num_features = 12  # From Mediapipe face detection.
     num_classes = 3
-    model_path = "model.h5"
+    model_path = "dgd_model.h5"
 
     landmark_dict = load_landmarks(npz_file_path)
-    ds = make_ds(landmark_dict, seq_length, num_features)
+    ds_train = make_ds_train(landmark_dict, seq_length, num_features)
     model = make_model(seq_length, num_features, num_classes)
 
-    train_and_save_model(ds, model, model_path)
+    train_and_save_model(ds_train, model, model_path)
 
 
 if __name__ == "__main__":
