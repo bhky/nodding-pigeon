@@ -32,7 +32,7 @@ def make_ds_train(
         landmark_dict: Dict[str, List[List[float]]],
         seq_length: int,
         num_features: int,
-        seed: int = 42
+        seed: int
 ) -> tf.data.Dataset:
     labels: List[str] = list(landmark_dict.keys())
     rng = np.random.default_rng(seed=seed)
@@ -56,15 +56,17 @@ def make_ds_train(
 def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
-        weights_path: str
+        weights_path: str,
+        seed: int = 42
 ) -> None:
     ds_train = make_ds_train(
-        landmark_dict, Config.seq_length, Config.num_features
+        landmark_dict, Config.seq_length, Config.num_features, seed
     )
     ds_train = ds_train.batch(16).prefetch(tf.data.AUTOTUNE)
 
     # Kind of arbitrary here.
-    steps_per_epoch = int(np.mean([len(v) for v in landmark_dict.values()]))
+    mean_data_size = int(np.mean([len(v) for v in landmark_dict.values()]))
+    steps_per_epoch = int(mean_data_size * 0.8)
 
     callbacks = [
         ModelCheckpoint(
