@@ -34,7 +34,7 @@ def make_ds_train(
         num_features: int,
         seed: int
 ) -> tf.data.Dataset:
-    labels: List[str] = list(landmark_dict.keys())
+    labels = Config.labels
     rng = np.random.default_rng(seed=seed)
 
     def to_categorical(idx: int) -> List[int]:
@@ -79,7 +79,7 @@ def train_and_save_weights(
             save_best_only=True, save_weights_only=True
         ),
         EarlyStopping(
-            monitor="loss", min_delta=1e-05, patience=5, verbose=1,
+            monitor="loss", min_delta=1e-05, patience=10, verbose=1,
             restore_best_weights=True
         ),
     ]
