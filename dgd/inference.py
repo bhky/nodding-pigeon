@@ -31,3 +31,7 @@ def predict_video(
     landmarks = video_to_landmarks(video_path, max_num_frames, padding)
     prediction: Sequence[float] = model.predict([landmarks])[0].tolist()
     return prediction
+
+
+# if __name__ == "__main__":
+#     print(predict_video(model=load_pretrained_model(f"../training/{Config.weights_filename}")))
