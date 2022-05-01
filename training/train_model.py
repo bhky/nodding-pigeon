@@ -105,7 +105,7 @@ def main() -> None:
     strategy = setup_accelerators_and_get_strategy()
     with strategy.scope():
         model = make_model(
-            Config.seq_length, Config.num_features, Config.num_classes
+            Config.seq_length, Config.num_features, len(Config.labels)
         )
 
     train_and_save_model(ds_train, model, Config.model_path)

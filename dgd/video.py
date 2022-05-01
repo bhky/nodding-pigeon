@@ -98,5 +98,5 @@ def video_to_landmarks(
     return landmarks
 
 
-# if __name__ == "__main__":
-#     video_to_landmarks(None, None)
+if __name__ == "__main__":
+    video_to_landmarks(None, None)
