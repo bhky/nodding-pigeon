@@ -12,12 +12,13 @@ from dgd.video import video_to_landmarks
 
 def collect_landmarks_with_webcam(
         labels: Sequence[str] = Config.labels,
+        max_num_frames: int = 800,
         output_npz_path: str = Config.npz_filename,
         sleep_seconds: float = 3.0
 ) -> None:
     landmark_dict: Dict[str, Sequence[Sequence[float]]] = {}
     for label in labels:
-        landmark_dict[label] = video_to_landmarks(None, 800)
+        landmark_dict[label] = video_to_landmarks(None, max_num_frames)
         time.sleep(sleep_seconds)
     np.savez_compressed(output_npz_path, **landmark_dict)
 
