@@ -20,10 +20,4 @@ def make_model(
     x = layers.LSTM(1)(seq_input)
     output = layers.Dense(num_classes, activation="softmax", name="output")(x)
     model = Model(seq_input, output)
-
-    model.compile(
-        loss="sparse_categorical_crossentropy",
-        optimizer=tf.keras.optimizers.Adam(),
-        metrics=["acc"]
-    )
     return model

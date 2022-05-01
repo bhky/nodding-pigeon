@@ -37,18 +37,23 @@ def make_ds_train(
     labels: List[str] = list(landmark_dict.keys())
     rng = np.random.default_rng(seed=seed)
 
+    def to_categorical(idx: int) -> List[int]:
+        y = [0] * len(labels)
+        y[idx] = 1
+        return y
+
     def gen() -> Tuple[List[List[float]], int]:
         while True:
             label_idx = int(rng.integers(len(labels), size=1))
             landmarks = landmark_dict[labels[label_idx]]
             seq_idx = int(rng.integers(len(landmarks) - seq_length, size=1))
-            yield landmarks[seq_idx: seq_idx + seq_length], label_idx
+            yield landmarks[seq_idx: seq_idx + seq_length], to_categorical(label_idx)
 
     return tf.data.Dataset.from_generator(
         gen,
         output_signature=(
             tf.TensorSpec(shape=(seq_length, num_features), dtype=tf.float32),
-            tf.TensorSpec(shape=(), dtype=tf.int32)
+            tf.TensorSpec(shape=(len(labels),), dtype=tf.int32)
         )
     )
 
@@ -66,7 +71,7 @@ def train_and_save_weights(
 
     # Kind of arbitrary here.
     mean_data_size = int(np.mean([len(v) for v in landmark_dict.values()]))
-    steps_per_epoch = mean_data_size // 2
+    steps_per_epoch = int(mean_data_size * 0.7)
 
     callbacks = [
         ModelCheckpoint(
@@ -74,10 +79,15 @@ def train_and_save_weights(
             save_best_only=True, save_weights_only=True
         ),
         EarlyStopping(
-            monitor="loss", min_delta=1e-05, patience=10, verbose=1,
+            monitor="loss", min_delta=1e-05, patience=5, verbose=1,
             restore_best_weights=True
         ),
     ]
+    model.compile(
+        loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.01),
+        optimizer=tf.keras.optimizers.Adam(amsgrad=True),
+        metrics=["acc"]
+    )
     model.fit(
         ds_train,
         epochs=500,
