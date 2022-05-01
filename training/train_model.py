@@ -66,7 +66,7 @@ def train_and_save_weights(
 
     # Kind of arbitrary here.
     mean_data_size = int(np.mean([len(v) for v in landmark_dict.values()]))
-    steps_per_epoch = int(mean_data_size * 0.8)
+    steps_per_epoch = mean_data_size // 2
 
     callbacks = [
         ModelCheckpoint(
@@ -74,7 +74,7 @@ def train_and_save_weights(
             save_best_only=True, save_weights_only=True
         ),
         EarlyStopping(
-            monitor="loss", min_delta=1e-08, patience=10, verbose=1,
+            monitor="loss", min_delta=1e-05, patience=10, verbose=1,
             restore_best_weights=True
         ),
     ]
@@ -92,7 +92,10 @@ def main() -> None:
     with strategy.scope():
         model = make_model()
     landmark_dict = load_landmarks(Config.npz_filename)
-    train_and_save_weights(landmark_dict, model, Config.weights_filename)
+    try:
+        train_and_save_weights(landmark_dict, model, Config.weights_filename)
+    except KeyboardInterrupt:
+        print("Training interrupted.")
 
 
 if __name__ == "__main__":
