@@ -25,7 +25,7 @@ def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
 
 def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
     loaded = np.load(npz_file_path)
-    return {name: loaded[name].tolist() for name in loaded.files}
+    return {label: loaded[label].tolist() for label in loaded.files}
 
 
 def make_ds_train(
@@ -33,12 +33,12 @@ def make_ds_train(
         seq_length: int,
         num_features: int
 ) -> tf.data.Dataset:
-    names: List[str] = list(landmark_dict.keys())
+    labels: List[str] = list(landmark_dict.keys())
     rng = np.random.default_rng(seed=42)
 
     def gen() -> List[List[float]]:
-        name = rng.choice(names, size=1)
-        landmarks = landmark_dict[name]
+        label = rng.choice(labels, size=1)
+        landmarks = landmark_dict[label]
         idx = rng.integers(len(landmarks) - seq_length, size=seq_length)
         yield landmarks[idx: idx + seq_length]
 
