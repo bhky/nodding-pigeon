@@ -17,7 +17,9 @@ def make_model(
         shape=(seq_length, num_features), dtype=tf.float32, name="input"
     )
     # Shape: (batch_size, seq_length, num_features)
-    x = layers.LSTM(1)(seq_input)
+    x = seq_input
+    x = layers.Dropout(0.2)(x)
+    x = layers.LSTM(1)(x)
     output = layers.Dense(num_classes, activation="softmax", name="output")(x)
     model = Model(seq_input, output)
     return model
