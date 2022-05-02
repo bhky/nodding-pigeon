@@ -29,7 +29,7 @@ def collect_landmarks_with_webcam(
 def preprocess(features: NDFloat32Array) -> NDFloat32Array:
     # Smoothing.
     # https://danielmuellerkomorowska.com/2020/06/02/smoothing-data-by-rolling-average-with-numpy/
-    kernel_size = 10
+    kernel_size = 5
     kernel = np.ones(kernel_size) / kernel_size
     features = np.array(
         [np.convolve(row, kernel, mode="same") for row in features]
