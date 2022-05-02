@@ -38,5 +38,5 @@ def predict_video(
     return prediction
 
 
-if __name__ == "__main__":
-    print(predict_video(model=load_pretrained_model(f"../training/{Config.weights_filename}")))
+# if __name__ == "__main__":
+#     print(predict_video(model=load_pretrained_model(f"../training/{Config.weights_filename}")))
