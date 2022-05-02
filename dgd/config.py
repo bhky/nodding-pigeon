@@ -10,5 +10,5 @@ class Config:
     labels: Sequence[str] = ("head_nodding", "head_turning")
     npz_filename: str = "landmarks.npz"
     seq_length: int = 60
-    num_features: int = 18
+    num_features: int = 14
     weights_filename: str = "dgd_weights.h5"

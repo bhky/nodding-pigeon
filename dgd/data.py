@@ -26,7 +26,13 @@ def collect_landmarks_with_webcam(
     np.savez_compressed(output_npz_path, **landmark_dict)
 
 
-def preprocess(features: NDFloat32Array) -> NDFloat32Array:
+def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
+    features = np.array(landmarks)
+
+    # Scale with face box coordinates.
+    features[:, 4:10] = (features[:, 4:10] - features[:, 0:1]) / features[:, 2:3]
+    features[:, 10:] = (features[:, 10:] - features[:, 1:2]) / features[:, 3:4]
+
     # Smoothing.
     # https://danielmuellerkomorowska.com/2020/06/02/smoothing-data-by-rolling-average-with-numpy/
     kernel_size = 5
@@ -36,9 +42,12 @@ def preprocess(features: NDFloat32Array) -> NDFloat32Array:
     )
 
     # Add stddev features.
-    x_coord_std = np.std(features[:, 4:10], axis=1, keepdims=True)
-    y_coord_std = np.std(features[:, 10:], axis=1, keepdims=True)
-    features = np.concatenate([features, x_coord_std, y_coord_std], axis=1)
+    xs_coord_std = np.std(features[:, 4:10], axis=1, keepdims=True)
+    ys_coord_std = np.std(features[:, 10:], axis=1, keepdims=True)
+    features = np.concatenate([features, xs_coord_std, ys_coord_std], axis=1)
+
+    # Drop face boxes.
+    features = np.delete(features, [0, 1, 2, 3], axis=1)
 
     assert features.shape[1] == Config.num_features
     return features
