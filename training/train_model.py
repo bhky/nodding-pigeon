@@ -6,6 +6,7 @@ from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import losses
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
@@ -36,12 +37,18 @@ def make_ds_train(
         preprocess_fn: Callable[[List[List[float]]], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
-    labels = Config.labels
+    # Note: undefined label must come first in this design, see make_y.
+    labels = (Config.undefined_label,) + Config.class_labels
     rng = np.random.default_rng(seed=seed)
 
-    def to_categorical(idx: int) -> List[int]:
-        y = [0] * len(labels)
-        y[idx] = 1
+    def make_y(label_idx: int) -> List[int]:
+        is_defined = 1 if label_idx > 0 else 0
+        y = [is_defined] + [0] * len(Config.class_labels)
+        if is_defined == 1:
+            y[label_idx] = 1
+        # Note:
+        # If is_defined, y is, e.g., [1, 0, 1, ..., 0] for the 2nd class,
+        # otherwise [0, ..., 0].
         return y
 
     def gen() -> Tuple[List[List[float]], int]:
@@ -50,7 +57,7 @@ def make_ds_train(
             landmarks = landmark_dict[labels[label_idx]]
             seq_idx = int(rng.integers(len(landmarks) - seq_length, size=1))
             features = preprocess_fn(landmarks[seq_idx: seq_idx + seq_length])
-            yield features, to_categorical(label_idx)
+            yield features, make_y(label_idx)
 
     return tf.data.Dataset.from_generator(
         gen,
@@ -58,6 +65,56 @@ def make_ds_train(
             tf.TensorSpec(shape=(seq_length, num_features), dtype=tf.float32),
             tf.TensorSpec(shape=(len(labels),), dtype=tf.int32)
         )
+    )
+
+
+def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
+    is_defined_true = y_true[:, :1]
+    is_defined_pred = y_pred[:, :1]
+    is_defined_loss = losses.BinaryCrossentropy(
+        reduction=tf.keras.losses.Reduction.NONE
+    )(is_defined_true, is_defined_pred)
+
+    # The class loss is designed in the way that, if is_defined is 0,
+    # the box values do not matter.
+    mask = y_true[:, 0] == 1
+    weight = tf.where(mask, 1.0, 0.0)
+    class_true = y_true[:, 1:]
+    class_pred = y_pred[:, 1:]
+    class_loss = losses.CategoricalCrossentropy(
+        reduction=tf.keras.losses.Reduction.NONE
+    )(class_true, class_pred, sample_weight=weight)
+
+    return (is_defined_loss + class_loss) * 0.5
+
+
+class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
+
+    def __init__(
+            self,
+            is_defined_threshold: float = 0.5,
+            name: str = "custom_accuracy"
+    ) -> None:
+        super(CustomAccuracy, self).__init__(name=name)
+        self.threshold = is_defined_threshold
+        self.acc = tf.keras.metrics.CategoricalAccuracy()
+
+    def update_state(self, y_true: tf.Tensor, y_pred: tf.Tensor) -> None:
+        y_pred = tf.where(y_pred[:, :1] >= self.threshold, y_pred, 0.0)
+        self.acc.update_state(y_true[:, 1:], y_pred[:, 1:])
+
+    def result(self) -> tf.Tensor:
+        return self.acc.result()
+
+    def reset_states(self) -> None:
+        self.acc.reset_states()
+
+
+def compile_model(model: Model) -> None:
+    model.compile(
+        loss=loss,
+        optimizer=tf.keras.optimizers.Adam(amsgrad=True),
+        metrics=[CustomAccuracy()],
     )
 
 
@@ -88,11 +145,6 @@ def train_and_save_weights(
             restore_best_weights=True
         ),
     ]
-    model.compile(
-        loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.02),
-        optimizer=tf.keras.optimizers.Adam(amsgrad=True),
-        metrics=["acc"]
-    )
     model.fit(
         ds_train,
         epochs=500,
@@ -106,6 +158,7 @@ def main() -> None:
     strategy = setup_accelerators_and_get_strategy()
     with strategy.scope():
         model = make_model()
+        compile_model(model)
     landmark_dict = load_landmarks(Config.npz_filename)
     try:
         train_and_save_weights(landmark_dict, model, Config.weights_filename)

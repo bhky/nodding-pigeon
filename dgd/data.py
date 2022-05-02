@@ -14,7 +14,7 @@ NDFloat32Array = np.typing.NDArray[np.float32]
 
 
 def collect_landmarks_with_webcam(
-        labels: Sequence[str] = Config.labels,
+        labels: Sequence[str] = (Config.undefined_label,) + Config.class_labels,
         max_num_frames: int = 800,
         output_npz_path: str = Config.npz_filename,
         sleep_seconds: float = 3.0
