@@ -2,7 +2,7 @@
 Inference utilities.
 """
 import os
-from typing import Callable, Optional, Sequence
+from typing import Callable, List, Optional, Sequence
 
 import numpy as np
 from tensorflow.keras.models import Model
@@ -27,13 +27,13 @@ def predict_video(
         model: Optional[Model] = None,
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
         padding: bool = True,
-        preprocess_fn: Callable[[NDFloat32Array], NDFloat32Array] = preprocess
+        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess
 ) -> Sequence[float]:
     if model is None:
         model = load_pretrained_model()
     landmarks = video_to_landmarks(video_path, max_num_frames, padding)
     prediction: Sequence[float] = model.predict(
-        np.expand_dims(preprocess_fn(np.array(landmarks)), axis=0)
+        np.expand_dims(preprocess_fn(landmarks), axis=0)
     )[0].tolist()
     return prediction
 

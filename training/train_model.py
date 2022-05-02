@@ -33,7 +33,7 @@ def make_ds_train(
         landmark_dict: Dict[str, List[List[float]]],
         seq_length: int,
         num_features: int,
-        preprocess_fn: Callable[[NDFloat32Array], NDFloat32Array],
+        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
     labels = Config.labels
@@ -49,9 +49,7 @@ def make_ds_train(
             label_idx = int(rng.integers(len(labels), size=1))
             landmarks = landmark_dict[labels[label_idx]]
             seq_idx = int(rng.integers(len(landmarks) - seq_length, size=1))
-            features = preprocess_fn(
-                np.array(landmarks[seq_idx: seq_idx + seq_length])
-            )
+            features = preprocess_fn(landmarks[seq_idx: seq_idx + seq_length])
             yield features, to_categorical(label_idx)
 
     return tf.data.Dataset.from_generator(
@@ -67,7 +65,7 @@ def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
         weights_path: str,
-        preprocess_fn: Callable[[NDFloat32Array], NDFloat32Array] = preprocess,
+        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess,
         seed: int = 42
 ) -> None:
     ds_train = make_ds_train(
