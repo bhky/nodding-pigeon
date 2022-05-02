@@ -39,6 +39,8 @@ def preprocess(features: NDFloat32Array) -> NDFloat32Array:
     x_coord_std = np.std(features[:, 4:10], axis=1, keepdims=True)
     y_coord_std = np.std(features[:, 10:], axis=1, keepdims=True)
     features = np.concatenate([features, x_coord_std, y_coord_std], axis=1)
+
+    assert features.shape[1] == Config.num_features
     return features
 
 
