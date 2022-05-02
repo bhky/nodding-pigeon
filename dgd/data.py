@@ -33,14 +33,6 @@ def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
     features[:, 4:10] = (features[:, 4:10] - features[:, 0:1]) / features[:, 2:3]
     features[:, 10:] = (features[:, 10:] - features[:, 1:2]) / features[:, 3:4]
 
-    # Smoothing.
-    # https://danielmuellerkomorowska.com/2020/06/02/smoothing-data-by-rolling-average-with-numpy/
-    kernel_size = 10
-    kernel = np.ones(kernel_size) / kernel_size
-    features = np.array(
-        [np.convolve(row, kernel, mode="same") for row in features]
-    )
-
     # Add stddev features.
     xs_coord_std = np.std(features[:, 4:10], axis=1, keepdims=True)
     ys_coord_std = np.std(features[:, 10:], axis=1, keepdims=True)
