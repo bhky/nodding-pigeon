@@ -2,7 +2,7 @@
 Train model for classifying landmark movements.
 """
 import os
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -99,7 +99,14 @@ class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
         self.threshold = is_defined_threshold
         self.acc = tf.keras.metrics.CategoricalAccuracy()
 
-    def update_state(self, y_true: tf.Tensor, y_pred: tf.Tensor) -> None:
+    def update_state(
+            self,
+            y_true: tf.Tensor,
+            y_pred: tf.Tensor,
+            sample_weight: Optional[tf.Tensor] = None
+    ) -> None:
+        # IMPORTANT - the sample_weight parameter is needed to solve:
+        # TypeError: tf__update_state() got an unexpected keyword argument 'sample_weight'
         y_pred = tf.where(y_pred[:, :1] >= self.threshold, y_pred, 0.0)
         self.acc.update_state(y_true[:, 1:], y_pred[:, 1:])
 
