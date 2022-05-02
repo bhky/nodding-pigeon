@@ -35,7 +35,7 @@ def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
 
     # Smoothing.
     # https://danielmuellerkomorowska.com/2020/06/02/smoothing-data-by-rolling-average-with-numpy/
-    kernel_size = 5
+    kernel_size = 10
     kernel = np.ones(kernel_size) / kernel_size
     features = np.array(
         [np.convolve(row, kernel, mode="same") for row in features]
