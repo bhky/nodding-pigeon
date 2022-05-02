@@ -2,7 +2,7 @@
 Train model for classifying landmark movements.
 """
 import os
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -10,6 +10,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
 from dgd.config import Config
+from dgd.data import NDFloat32Array, preprocess
 from dgd.model import make_model
 
 tf.random.set_seed(0)
@@ -32,6 +33,7 @@ def make_ds_train(
         landmark_dict: Dict[str, List[List[float]]],
         seq_length: int,
         num_features: int,
+        preprocess_fn: Callable[[NDFloat32Array], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
     labels = Config.labels
@@ -47,7 +49,10 @@ def make_ds_train(
             label_idx = int(rng.integers(len(labels), size=1))
             landmarks = landmark_dict[labels[label_idx]]
             seq_idx = int(rng.integers(len(landmarks) - seq_length, size=1))
-            yield landmarks[seq_idx: seq_idx + seq_length], to_categorical(label_idx)
+            features = preprocess_fn(
+                np.array(landmarks[seq_idx: seq_idx + seq_length])
+            )
+            yield features, to_categorical(label_idx)
 
     return tf.data.Dataset.from_generator(
         gen,
@@ -62,10 +67,12 @@ def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
         weights_path: str,
+        preprocess_fn: Callable[[NDFloat32Array], NDFloat32Array] = preprocess,
         seed: int = 42
 ) -> None:
     ds_train = make_ds_train(
-        landmark_dict, Config.seq_length, Config.num_features, seed
+        landmark_dict, Config.seq_length, Config.num_features,
+        preprocess_fn, seed
     )
     ds_train = ds_train.batch(16).prefetch(tf.data.AUTOTUNE)
 
@@ -84,7 +91,7 @@ def train_and_save_weights(
         ),
     ]
     model.compile(
-        loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.01),
+        loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.02),
         optimizer=tf.keras.optimizers.Adam(amsgrad=True),
         metrics=["acc"]
     )

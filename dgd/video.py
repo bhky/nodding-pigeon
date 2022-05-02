@@ -50,23 +50,30 @@ def video_to_landmarks(
             left_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EAR_TRAGION)
 
             face_box_rel = detection.location_data.relative_bounding_box
-            x_min = max(0.0, face_box_rel.xmin)
-            y_min = max(0.0, face_box_rel.ymin)
+            face_box_rel = [
+                max(0.0, face_box_rel.xmin),
+                max(0.0, face_box_rel.ymin),
+                face_box_rel.width,
+                face_box_rel.height,
+            ]
+            xs = [
+                right_eye_rel.x,
+                left_eye_rel.x,
+                nose_tip_rel.x,
+                mouth_center_rel.x,
+                right_ear_rel.x,
+                left_ear_rel.x,
+            ]
+            ys = [
+                right_eye_rel.y,
+                left_eye_rel.y,
+                nose_tip_rel.y,
+                mouth_center_rel.y,
+                right_ear_rel.y,
+                left_ear_rel.y,
+            ]
 
-            def scale_x(x: float) -> float:
-                return (x - x_min) / (face_box_rel.width + 1e-08)
-
-            def scale_y(y: float) -> float:
-                return (y - y_min) / (face_box_rel.height + 1e-08)
-
-            landmarks.append(
-                [scale_x(right_eye_rel.x), scale_y(right_eye_rel.y),
-                 scale_x(left_eye_rel.x), scale_y(left_eye_rel.y),
-                 scale_x(nose_tip_rel.x), scale_y(nose_tip_rel.y),
-                 scale_x(mouth_center_rel.x), scale_y(mouth_center_rel.y),
-                 scale_x(right_ear_rel.x), scale_y(right_eye_rel.y),
-                 scale_x(left_ear_rel.x), scale_y(left_eye_rel.y)]
-            )
+            landmarks.append([*face_box_rel, *xs, *ys])
 
             valid_frame_count += 1
 
