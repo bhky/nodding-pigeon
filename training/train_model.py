@@ -7,7 +7,6 @@ from typing import Callable, Dict, List, Optional, Tuple
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import losses
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
 from hgd.config import Config
@@ -143,11 +142,11 @@ def train_and_save_weights(
     steps_per_epoch = int(mean_data_size * 0.7)
 
     callbacks = [
-        ModelCheckpoint(
+        tf.keras.callbacks.ModelCheckpoint(
             filepath=weights_path, monitor="loss", verbose=1,
             save_best_only=True, save_weights_only=True
         ),
-        EarlyStopping(
+        tf.keras.callbacks.EarlyStopping(
             monitor="loss", min_delta=1e-04, patience=10, verbose=1,
             restore_best_weights=True
         ),
