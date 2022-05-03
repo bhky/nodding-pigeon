@@ -148,7 +148,7 @@ def train_and_save_weights(
             save_best_only=True, save_weights_only=True
         ),
         EarlyStopping(
-            monitor="loss", min_delta=1e-03, patience=10, verbose=1,
+            monitor="loss", min_delta=1e-04, patience=10, verbose=1,
             restore_best_weights=True
         ),
     ]
