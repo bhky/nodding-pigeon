@@ -1,6 +1,7 @@
 """
 Data utilities.
 """
+import os
 import time
 from typing import Dict, List, Sequence
 
@@ -13,22 +14,27 @@ from hgd.video import video_to_landmarks
 NDFloat32Array = np.typing.NDArray[np.float32]
 
 
+def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
+    loaded = np.load(npz_path)
+    return {label: loaded[label].tolist() for label in loaded.files}
+
+
 def collect_landmarks_with_webcam(
         labels: Sequence[str] = (Config.stationary_label,) + Config.class_labels,
-        max_num_frames: int = 800,
         npz_path: str = Config.npz_filename,
-        sleep_seconds: float = 3.0
+        max_num_frames: int = 800,
+        sleep_seconds: float = 3.0,
+        update_file: bool = True
 ) -> None:
-    landmark_dict: Dict[str, List[List[float]]] = {}
+    if os.path.isfile(npz_path) and update_file:
+        landmark_dict = load_landmarks(npz_path)
+    else:
+        landmark_dict = {}
+
     for label in labels:
         landmark_dict[label] = video_to_landmarks(None, max_num_frames)
         time.sleep(sleep_seconds)
     np.savez_compressed(npz_path, **landmark_dict)
-
-
-def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
-    loaded = np.load(npz_path)
-    return {label: loaded[label].tolist() for label in loaded.files}
 
 
 def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
