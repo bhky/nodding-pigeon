@@ -26,6 +26,11 @@ def collect_landmarks_with_webcam(
     np.savez_compressed(output_npz_path, **landmark_dict)
 
 
+def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
+    loaded = np.load(npz_file_path)
+    return {label: loaded[label].tolist() for label in loaded.files}
+
+
 def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
     features = np.array(landmarks)
 

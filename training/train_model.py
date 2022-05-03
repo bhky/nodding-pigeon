@@ -10,7 +10,7 @@ from tensorflow.keras import losses
 from tensorflow.keras.models import Model
 
 from hgd.config import Config
-from hgd.data import NDFloat32Array, preprocess
+from hgd.data import NDFloat32Array, load_landmarks, preprocess
 from hgd.model import make_model
 
 tf.random.set_seed(0)
@@ -22,11 +22,6 @@ def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
     strategy = tf.distribute.MirroredStrategy()
     print(f"Number of accelerators: {strategy.num_replicas_in_sync}")
     return strategy
-
-
-def load_landmarks(npz_file_path: str) -> Dict[str, List[List[float]]]:
-    loaded = np.load(npz_file_path)
-    return {label: loaded[label].tolist() for label in loaded.files}
 
 
 def make_ds_train(
