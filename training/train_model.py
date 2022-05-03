@@ -76,6 +76,7 @@ def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     class_true = y_true[:, 1:]
     class_pred = y_pred[:, 1:]
     class_loss = losses.CategoricalCrossentropy(
+        label_smoothing=0.05,
         reduction=tf.keras.losses.Reduction.NONE
     )(class_true, class_pred, sample_weight=weight)
 
