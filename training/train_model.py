@@ -37,8 +37,8 @@ def make_ds_train(
         preprocess_fn: Callable[[List[List[float]]], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
-    # Note: undefined label must come first in this design, see make_y.
-    labels = (Config.undefined_label,) + Config.class_labels
+    # Note: stationary label must come first in this design, see make_y.
+    labels = (Config.stationary_label,) + Config.class_labels
     rng = np.random.default_rng(seed=seed)
 
     def make_y(label_idx: int) -> List[int]:
