@@ -113,8 +113,8 @@ class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
     def result(self) -> tf.Tensor:
         return self.acc.result()
 
-    def reset_states(self) -> None:
-        self.acc.reset_states()
+    def reset_state(self) -> None:
+        self.acc.reset_state()
 
 
 def compile_model(model: Model) -> None:
