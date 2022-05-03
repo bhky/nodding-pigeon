@@ -141,10 +141,6 @@ def train_and_save_weights(
             filepath=weights_path, monitor="loss", mode="min",
             save_best_only=True, save_weights_only=True, verbose=1
         ),
-        tf.keras.callbacks.ReduceLROnPlateau(
-            monitor="loss", mode="min", patience=6, factor=0.1, min_lr=1e-05,
-            verbose=1
-        ),
         tf.keras.callbacks.EarlyStopping(
             monitor="loss", min_delta=1e-04, patience=10,
             restore_best_weights=True, verbose=1
