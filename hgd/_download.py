@@ -7,18 +7,18 @@ from pathlib import Path
 
 import gdown  # type: ignore
 
-from dgd.config import Config
+from hgd.config import Config
 
-WEIGHTS_URL = f"https://github.com/bhky/dynamic-gesture-detection/releases/download/v0.1.0/{Config.weights_filename}"
+WEIGHTS_URL = f"https://github.com/bhky/head-gesture-detection/releases/download/v0.1.0/{Config.weights_filename}"
 
 
 def _get_home_dir() -> str:
-    return str(os.getenv("DGD_HOME", default=Path.home()))
+    return str(os.getenv("HGD_HOME", default=Path.home()))
 
 
 def get_default_weights_path() -> str:
     home_dir = _get_home_dir()
-    return os.path.join(home_dir, f".dgd/weights/{Config.weights_filename}")
+    return os.path.join(home_dir, f".hgd/weights/{Config.weights_filename}")
 
 
 def download_weights_to(weights_path: str) -> None:

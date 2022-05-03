@@ -7,11 +7,11 @@ from typing import Callable, List, Optional, Sequence
 import numpy as np
 from tensorflow.keras.models import Model
 
-from dgd._download import get_default_weights_path, download_weights_to
-from dgd.config import Config
-from dgd.data import NDFloat32Array, preprocess
-from dgd.model import make_model
-from dgd.video import video_to_landmarks
+from hgd._download import get_default_weights_path, download_weights_to
+from hgd.config import Config
+from hgd.data import NDFloat32Array, preprocess
+from hgd.model import make_model
+from hgd.video import video_to_landmarks
 
 
 def load_pretrained_model(weights_path: str = get_default_weights_path()) -> Model:

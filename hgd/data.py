@@ -7,8 +7,8 @@ from typing import Dict, List, Sequence
 import numpy as np
 import numpy.typing
 
-from dgd.config import Config
-from dgd.video import video_to_landmarks
+from hgd.config import Config
+from hgd.video import video_to_landmarks
 
 NDFloat32Array = np.typing.NDArray[np.float32]
 

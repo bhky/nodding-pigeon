@@ -8,4 +8,4 @@ build/
 tmp/
 scripts/
 dist/
-dgd.egg-info/
+hgd.egg-info/

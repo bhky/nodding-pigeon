@@ -10,9 +10,9 @@ from tensorflow.keras import losses
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Model
 
-from dgd.config import Config
-from dgd.data import NDFloat32Array, preprocess
-from dgd.model import make_model
+from hgd.config import Config
+from hgd.data import NDFloat32Array, preprocess
+from hgd.model import make_model
 
 tf.random.set_seed(0)
 

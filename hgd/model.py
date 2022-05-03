@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import Model
 
-from dgd.config import Config
+from hgd.config import Config
 
 
 def make_model(

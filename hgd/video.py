@@ -7,7 +7,7 @@ import cv2
 from mediapipe.python.solutions import face_detection as mp_face
 from mediapipe.python.solutions import drawing_utils as mp_drawing
 
-from dgd.config import Config
+from hgd.config import Config
 
 
 def video_to_landmarks(

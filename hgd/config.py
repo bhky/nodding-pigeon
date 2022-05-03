@@ -12,4 +12,4 @@ class Config:
     npz_filename: str = "landmarks.npz"
     seq_length: int = 60
     num_features: int = 14
-    weights_filename: str = "dgd_weights.h5"
+    weights_filename: str = "hgd_weights.h5"
