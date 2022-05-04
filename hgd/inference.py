@@ -24,21 +24,24 @@ def load_pretrained_model(weights_path: str = get_default_weights_path()) -> Mod
 
 def postprocess(
         prediction: Sequence[float],
-        is_moving_threshold: float = 0.5,
+        motion_threshold: float = 0.5,
         class_threshold: float = 0.9
 ) -> Dict[str, Any]:
-    if prediction[0] < is_moving_threshold:
+    class_probs = prediction[1:]
+    if prediction[0] < motion_threshold:
         label = Config.stationary_label
     else:
-        class_probs = prediction[1:]
         if np.max(class_probs) < class_threshold:
             label = Config.undefined_class_label
         else:
             label = Config.class_labels[int(np.argmax(class_probs))]
     return {
         "gesture": label,
-        "is_moving_probability": prediction[0],
-        "gesture_probabilities": prediction[1:]
+        "motion_probability": prediction[0],
+        "gesture_probabilities": {
+            Config.class_labels[i]: class_probs[i]
+            for i in range(len(Config.class_labels))
+        }
     }
 
 

@@ -36,12 +36,12 @@ def make_ds_train(
     rng = np.random.default_rng(seed=seed)
 
     def make_y(label_idx: int) -> List[int]:
-        is_moving = 1 if label_idx > 0 else 0
-        y = [is_moving] + [0] * len(Config.class_labels)
-        if is_moving == 1:
+        has_motion = 1 if label_idx > 0 else 0
+        y = [has_motion] + [0] * len(Config.class_labels)
+        if has_motion == 1:
             y[label_idx] = 1
         # Note:
-        # If is_moving, y is, e.g., [1, 0, 1, ..., 0] for the 2nd class,
+        # If has_motion, y is, e.g., [1, 0, 1, ..., 0] for the 2nd class,
         # otherwise [0, ..., 0].
         return y
 
@@ -63,13 +63,13 @@ def make_ds_train(
 
 
 def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
-    is_moving_true = y_true[:, :1]
-    is_moving_pred = y_pred[:, :1]
-    is_moving_loss = losses.BinaryCrossentropy(
+    has_motion_true = y_true[:, :1]
+    has_motion_pred = y_pred[:, :1]
+    has_motion_loss = losses.BinaryCrossentropy(
         reduction=tf.keras.losses.Reduction.NONE
-    )(is_moving_true, is_moving_pred)
+    )(has_motion_true, has_motion_pred)
 
-    # The class loss is designed in the way that, if is_moving is 0,
+    # The class loss is designed in the way that, if has_motion is 0,
     # the box values do not matter.
     mask = y_true[:, 0] == 1
     weight = tf.where(mask, 1.0, 0.0)
@@ -80,18 +80,18 @@ def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
         reduction=tf.keras.losses.Reduction.NONE
     )(class_true, class_pred, sample_weight=weight)
 
-    return (is_moving_loss + class_loss) * 0.5
+    return (has_motion_loss + class_loss) * 0.5
 
 
 class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
 
     def __init__(
             self,
-            is_moving_threshold: float = 0.5,
+            motion_threshold: float = 0.5,
             name: str = "custom_accuracy"
     ) -> None:
         super(CustomAccuracy, self).__init__(name=name)
-        self.threshold = is_moving_threshold
+        self.threshold = motion_threshold
         self.acc = tf.keras.metrics.CategoricalAccuracy()
 
     def update_state(
