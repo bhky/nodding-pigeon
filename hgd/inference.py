@@ -37,10 +37,12 @@ def postprocess(
             label = Config.class_labels[int(np.argmax(class_probs))]
     return {
         "gesture": label,
-        "motion_probability": prediction[0],
-        "gesture_probabilities": {
-            Config.class_labels[i]: class_probs[i]
-            for i in range(len(Config.class_labels))
+        "probabilities": {
+            "has_motion": prediction[0],
+            "gestures": {
+                Config.class_labels[i]: class_probs[i]
+                for i in range(len(Config.class_labels))
+            }
         }
     }
 
