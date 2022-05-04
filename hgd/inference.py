@@ -5,7 +5,7 @@ import os
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
 import numpy as np
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from hgd._download import get_default_weights_path, download_weights_to
 from hgd.config import Config

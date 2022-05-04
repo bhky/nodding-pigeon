@@ -1,7 +1,7 @@
 """
 Video utilities.
 """
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import cv2
 from mediapipe.python.solutions import face_detection as mp_face
@@ -11,7 +11,7 @@ from hgd.config import Config
 
 
 def video_to_landmarks(
-        video_path: Optional[str],
+        video_path: Optional[Union[int, str]],
         max_num_frames: Optional[int] = Config.seq_length,
         from_beginning: bool = True,
         end_padding: bool = True
@@ -94,7 +94,7 @@ def video_to_landmarks(
                     cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
                 )
 
-                if cv2.waitKey(1) == ord("q"):
+                if cv2.waitKey(1) == ord("q"):  # pylint: disable=no-member
                     break
 
     if max_num_frames and not from_beginning:
@@ -105,7 +105,7 @@ def video_to_landmarks(
         landmarks = landmarks + [zeros] * (max_num_frames - len(landmarks))
 
     cap.release()
-    cv2.destroyAllWindows()
+    cv2.destroyAllWindows()  # pylint: disable=no-member
     return landmarks
 
 

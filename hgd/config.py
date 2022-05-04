@@ -7,7 +7,7 @@ from typing import Tuple
 
 @dataclass
 class Config:
-    gesture_labels: Tuple[str] = ("nodding", "turning")
+    gesture_labels: Tuple[str, ...] = ("nodding", "turning")
     undefined_gesture_label: str = "undefined"
     stationary_label: str = "stationary"
     npz_filename: str = "landmarks.npz"

@@ -2,8 +2,8 @@
 Model utilities.
 """
 import tensorflow as tf
-from tensorflow.keras import layers
-from tensorflow.keras.models import Model
+from tensorflow.keras import layers  # pylint: disable=import-error
+from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from hgd.config import Config
 

@@ -5,7 +5,7 @@ Download utilities.
 import os
 from pathlib import Path
 
-import gdown  # type: ignore
+import gdown
 
 from hgd.config import Config
 
@@ -24,5 +24,5 @@ def get_default_weights_path() -> str:
 def download_weights_to(weights_path: str) -> None:
     download_dir = os.path.dirname(os.path.abspath(weights_path))
     os.makedirs(download_dir, exist_ok=True)
-    print(f"Pre-trained weights will be downloaded.")
+    print("Pre-trained weights will be downloaded.")
     gdown.download(WEIGHTS_URL, weights_path)

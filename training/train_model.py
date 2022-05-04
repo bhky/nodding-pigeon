@@ -84,7 +84,7 @@ def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     return (has_motion_loss + gesture_loss) * 0.5
 
 
-class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
+class CustomAccuracy(tf.keras.metrics.Metric):
 
     def __init__(
             self,
