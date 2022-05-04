@@ -40,7 +40,7 @@ def collect_landmarks_with_webcam(
 def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
     features = np.array(landmarks)
 
-    # Scale with face box coordinates.
+    # Make the landmarks relative to the face box.
     features[:, 4:10] = (features[:, 4:10] - features[:, 0:1]) / features[:, 2:3]
     features[:, 10:] = (features[:, 10:] - features[:, 1:2]) / features[:, 3:4]
 
