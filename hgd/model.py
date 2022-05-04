@@ -23,8 +23,8 @@ def make_model(
     x_0 = layers.Dropout(0.01)(x)
 
     has_motion = layers.Dense(1, activation="sigmoid", name="has_motion")(x_0)
-    class_probs = layers.Dense(len(Config.class_labels),
-                               activation="softmax", name="class_probs")(x_0)
-    output = layers.Concatenate()([has_motion, class_probs])
+    gesture_probs = layers.Dense(len(Config.gesture_labels),
+                                 activation="softmax", name="gesture_probs")(x_0)
+    output = layers.Concatenate()([has_motion, gesture_probs])
     model = Model(seq_input, output)
     return model

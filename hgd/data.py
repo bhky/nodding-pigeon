@@ -20,7 +20,7 @@ def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
 
 
 def collect_landmarks_with_webcam(
-        labels: Sequence[str] = (Config.stationary_label,) + Config.class_labels,
+        labels: Sequence[str] = (Config.stationary_label,) + Config.gesture_labels,
         npz_path: str = Config.npz_filename,
         max_num_frames: int = 800,
         sleep_seconds: float = 3.0,

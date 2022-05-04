@@ -32,12 +32,12 @@ def make_ds_train(
         seed: int
 ) -> tf.data.Dataset:
     # Note: stationary label must come first in this design, see make_y.
-    labels = (Config.stationary_label,) + Config.class_labels
+    labels = (Config.stationary_label,) + Config.gesture_labels
     rng = np.random.default_rng(seed=seed)
 
     def make_y(label_idx: int) -> List[int]:
         has_motion = 1 if label_idx > 0 else 0
-        y = [has_motion] + [0] * len(Config.class_labels)
+        y = [has_motion] + [0] * len(Config.gesture_labels)
         if has_motion == 1:
             y[label_idx] = 1
         # Note:
@@ -74,14 +74,14 @@ def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
     # the box values do not matter.
     mask = y_true[:, 0] == 1
     weight = tf.where(mask, 1.0, 0.0)
-    class_true = y_true[:, 1:]
-    class_pred = y_pred[:, 1:]
-    class_loss = losses.CategoricalCrossentropy(
+    gesture_true = y_true[:, 1:]
+    gesture_pred = y_pred[:, 1:]
+    gesture_loss = losses.CategoricalCrossentropy(
         label_smoothing=0.05,
         reduction=tf.keras.losses.Reduction.NONE
-    )(class_true, class_pred, sample_weight=weight)
+    )(gesture_true, gesture_pred, sample_weight=weight)
 
-    return (has_motion_loss + class_loss) * 0.5
+    return (has_motion_loss + gesture_loss) * 0.5
 
 
 class CustomAccuracy(tf.keras.metrics.Metric):  # type: ignore
