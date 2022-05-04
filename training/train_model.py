@@ -41,8 +41,9 @@ def make_ds_train(
         if has_motion == 1:
             y[label_idx] = 1
         # Note:
-        # If has_motion, y is, e.g., [1, 0, 1, ..., 0] for the 2nd class,
-        # otherwise [0, ..., 0].
+        # Format of y is [has_motion, <one-hot-gesture-class-vector>], e.g.,
+        # [1, 0, 1, ..., 0] for the 2nd gesture,
+        # [0, ..., 0] for stationary case.
         return y
 
     def gen() -> Tuple[List[List[float]], int]:
