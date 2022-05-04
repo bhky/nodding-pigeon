@@ -19,7 +19,8 @@ def make_model(
     x = seq_input
     x = layers.Conv1D(2, 10, strides=5, padding="valid", activation="relu")(x)
     x = layers.Conv1D(1, 5, strides=2, padding="valid", activation="relu")(x)
-    x_0 = layers.Flatten()(x)
+    x = layers.Flatten()(x)
+    x_0 = layers.Dropout(0.01)(x)
 
     is_moving = layers.Dense(1, activation="sigmoid", name="is_moving")(x_0)
     class_prob = layers.Dense(len(Config.class_labels),
