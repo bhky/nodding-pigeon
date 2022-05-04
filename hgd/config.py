@@ -7,7 +7,7 @@ from typing import Tuple
 
 @dataclass
 class Config:
-    class_labels: Tuple[str] = ("head_nodding", "head_turning")
+    class_labels: Tuple[str] = ("nodding", "turning")
     undefined_class_label: str = "undefined"
     stationary_label: str = "stationary"
     npz_filename: str = "landmarks.npz"
