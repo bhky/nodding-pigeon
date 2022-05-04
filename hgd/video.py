@@ -13,7 +13,8 @@ from hgd.config import Config
 def video_to_landmarks(
         video_path: Optional[str],
         max_num_frames: Optional[int] = Config.seq_length,
-        padding: bool = True
+        from_beginning: bool = True,
+        end_padding: bool = True
 ) -> List[List[float]]:
     video_path = video_path if video_path else 0  # For 0, webcam will be used.
     font_scale = 0.6
@@ -31,7 +32,7 @@ def video_to_landmarks(
                 if video_path == 0:
                     continue  # Ignore empty frame of webcam.
                 break  # End of given video.
-            if max_num_frames and valid_frame_count >= max_num_frames:
+            if max_num_frames and from_beginning and valid_frame_count >= max_num_frames:
                 break
 
             frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
@@ -96,7 +97,10 @@ def video_to_landmarks(
                 if cv2.waitKey(1) == ord("q"):
                     break
 
-    if padding and max_num_frames and len(landmarks) < max_num_frames:
+    if max_num_frames and not from_beginning:
+        landmarks = landmarks[-max_num_frames:]
+
+    if max_num_frames and end_padding and len(landmarks) < max_num_frames:
         zeros = [0.0] * 12
         landmarks = landmarks + [zeros] * (max_num_frames - len(landmarks))
 

@@ -51,12 +51,15 @@ def predict_video(
         video_path: Optional[str] = None,  # None will start a webcam.
         model: Optional[Model] = None,
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
-        padding: bool = True,
+        from_beginning: bool = True,
+        end_padding: bool = True,
         preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess
 ) -> Dict[str, Any]:
     if model is None:
         model = load_pretrained_model()
-    landmarks = video_to_landmarks(video_path, max_num_frames, padding)
+    landmarks = video_to_landmarks(
+        video_path, max_num_frames, from_beginning, end_padding
+    )
     prediction: Sequence[float] = model.predict(
         np.expand_dims(preprocess_fn(landmarks), axis=0)
     )[0].tolist()
