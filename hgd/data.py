@@ -37,7 +37,7 @@ def collect_landmarks_with_webcam(
     np.savez_compressed(npz_path, **landmark_dict)
 
 
-def preprocess(landmarks: List[List[float]]) -> NDFloat32Array:
+def preprocess(landmarks: Sequence[Sequence[float]]) -> NDFloat32Array:
     features = np.array(landmarks)
 
     # Make the landmarks relative to the face box.

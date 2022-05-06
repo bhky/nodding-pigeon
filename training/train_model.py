@@ -2,7 +2,7 @@
 Train model for classifying landmark movements.
 """
 import os
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -25,10 +25,10 @@ def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
 
 
 def make_ds_train(
-        landmark_dict: Dict[str, List[List[float]]],
+        landmark_dict: Dict[str, Sequence[Sequence[float]]],
         seq_length: int,
         num_features: int,
-        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array],
+        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
     # Note: stationary label must come first in this design, see make_y.
@@ -125,7 +125,7 @@ def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
         weights_path: str,
-        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess,
+        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess,
         seed: int = 42
 ) -> None:
     ds_train = make_ds_train(

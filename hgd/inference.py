@@ -43,7 +43,7 @@ def predict_video(
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
         from_beginning: bool = True,
         end_padding: bool = True,
-        preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess
+        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess
 ) -> Dict[str, Any]:
     if model is None:
         model = make_model()
