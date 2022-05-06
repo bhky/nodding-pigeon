@@ -7,9 +7,11 @@ from pathlib import Path
 
 import gdown
 
+from hgd import __weights_version__
 from hgd.config import Config
 
-WEIGHTS_URL = f"https://github.com/bhky/head-gesture-detection/releases/download/v0.1.0/{Config.weights_filename}"
+WEIGHTS_URL = "https://github.com/bhky/head-gesture-detection/releases/download/" \
+              f"weights_v{__weights_version__}/{Config.weights_filename}"
 
 
 def _get_home_dir() -> str:
