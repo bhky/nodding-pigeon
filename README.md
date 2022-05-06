@@ -37,6 +37,11 @@ from hgd.inference import predict_video
 # The result is a dictionary.
 result = predict_video()
 print(result)
+
+# Alternatively, you could provide a pre-recorded video file:
+result = predict_video("your_head_gesture_video.mp4", from_beginning=False)
+# The `from_beginning` flag controls whether the needed frames will be obtained
+# from the beginning or toward the end of your provided video.
 ```
 Result format:
 ```text
@@ -51,8 +56,18 @@ Result format:
   }
 }
 ```
+
+# Head gestures
+
 The following `gesture` types are available:
 - `nodding` - Repeatedly tilt your head upward and downward.
 - `turning` - Repeatedly turn your head leftward and rightward.
 - `stationary` - Not tilting or turning your head; translation motion is still treated as stationary.
 - `undefined` - Unrecognised gesture.
+
+To determine the final `gesture`:
+- If the `has_motion` probability is smaller than a threshold (default `0.5`),
+  `gesture` is `stationary`.
+- Otherwise, we will look for the largest probability from `gestures`:
+  - If it is smaller than another threshold (default `0.9`), `gesture` is `undefined`,
+  - else, the corresponding gesture label is selected (e.g., `nodding`).
