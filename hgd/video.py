@@ -82,7 +82,8 @@ def video_to_landmarks(
                 mp_drawing.draw_detection(frame, detection)
                 flipped_frame = cv2.flip(frame, 1)  # pylint: disable=no-member
 
-                text = f"{valid_frame_count} / {max_num_frames}"
+                text = f"{valid_frame_count} / {max_num_frames}" \
+                    if max_num_frames else str(valid_frame_count)
                 cv2.putText(  # pylint: disable=no-member
                     flipped_frame, text, (10, 20),
                     cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
