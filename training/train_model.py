@@ -160,7 +160,7 @@ def train_and_save_weights(
 def main() -> None:
     strategy = setup_accelerators_and_get_strategy()
     with strategy.scope():
-        model = make_model()
+        model = make_model(weights_path=None)
         compile_model(model)
     landmark_dict = load_landmarks(Config.npz_filename)
     try:
