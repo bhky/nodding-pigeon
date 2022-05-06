@@ -1,19 +1,21 @@
 """
 Model utilities.
 """
+import os
+from typing import Optional
+
 import tensorflow as tf
 from tensorflow.keras import layers  # pylint: disable=import-error
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from hgd.config import Config
+from hgd._download import download_weights_to, get_default_weights_path
 
 
-def make_model(
-        seq_length: int = Config.seq_length,
-        num_features: int = Config.num_features
-) -> Model:
+def make_model(weights_path: Optional[str] = get_default_weights_path()) -> Model:
     seq_input = layers.Input(
-        shape=(seq_length, num_features), dtype=tf.float32, name="input"
+        shape=(Config.seq_length, Config.num_features),
+        dtype=tf.float32, name="input"
     )
     # Shape: (batch_size, seq_length, num_features)
     x = seq_input
@@ -26,5 +28,12 @@ def make_model(
     gesture_probs = layers.Dense(len(Config.gesture_labels),
                                  activation="softmax", name="gesture_probs")(x_0)
     output = layers.Concatenate()([has_motion, gesture_probs])
+
     model = Model(seq_input, output)
+
+    if weights_path is not None:
+        if not os.path.isfile(weights_path):
+            download_weights_to(weights_path)
+        model.load_weights(weights_path)
+
     return model

@@ -1,25 +1,15 @@
 """
 Inference utilities.
 """
-import os
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
-from hgd._download import get_default_weights_path, download_weights_to
 from hgd.config import Config
 from hgd.data import NDFloat32Array, preprocess
 from hgd.model import make_model
 from hgd.video import video_to_landmarks
-
-
-def load_pretrained_model(weights_path: str = get_default_weights_path()) -> Model:
-    model = make_model()
-    if not os.path.isfile(weights_path):
-        download_weights_to(weights_path)
-    model.load_weights(weights_path)
-    return model
 
 
 def postprocess(
@@ -56,7 +46,7 @@ def predict_video(
         preprocess_fn: Callable[[List[List[float]]], NDFloat32Array] = preprocess
 ) -> Dict[str, Any]:
     if model is None:
-        model = load_pretrained_model()
+        model = make_model()
     landmarks = video_to_landmarks(
         video_path, max_num_frames, from_beginning, end_padding
     )
@@ -67,4 +57,4 @@ def predict_video(
 
 
 # if __name__ == "__main__":
-#     print(predict_video(model=load_pretrained_model(f"../training/{Config.weights_filename}")))
+#     print(predict_video(model=make_model(f"../training/{Config.weights_filename}")))

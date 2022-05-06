@@ -5,7 +5,8 @@ import os
 import unittest
 
 from hgd.config import Config
-from hgd.inference import load_pretrained_model, predict_video
+from hgd.inference import predict_video
+from hgd.model import make_model
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NODDING_VIDEO_PATH = os.path.join(BASE_DIR, "head_nodding.mp4")
@@ -14,8 +15,8 @@ STATIONARY_VIDEO_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 MODEL_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 
 # For local testing only:
-# MODEL = load_pretrained_model(f"../training/{Config.weights_filename}")
-MODEL = load_pretrained_model()
+# MODEL = make_model(f"../training/{Config.weights_filename}")
+MODEL = make_model()
 
 
 def predict_gesture(video_path: str) -> str:
