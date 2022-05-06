@@ -4,8 +4,8 @@ Video utilities.
 from typing import List, Optional, Union
 
 import cv2
-from mediapipe.python.solutions import face_detection as mp_face
 from mediapipe.python.solutions import drawing_utils as mp_drawing
+from mediapipe.python.solutions import face_detection as mp_face
 
 from hgd.config import Config
 

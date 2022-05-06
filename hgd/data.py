@@ -8,8 +8,8 @@ from typing import Dict, List, Sequence
 import numpy as np
 import numpy.typing
 
+from hgd._video import video_to_landmarks
 from hgd.config import Config
-from hgd.video import video_to_landmarks
 
 NDFloat32Array = np.typing.NDArray[np.float32]
 
@@ -19,7 +19,7 @@ def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
     return {label: loaded[label].tolist() for label in loaded.files}
 
 
-def collect_landmarks_with_webcam(
+def _collect_landmarks_with_webcam(
         labels: Sequence[str] = (Config.stationary_label,) + Config.gesture_labels,
         npz_path: str = Config.npz_filename,
         max_num_frames: int = 800,
@@ -57,4 +57,4 @@ def preprocess(landmarks: Sequence[Sequence[float]]) -> NDFloat32Array:
 
 
 if __name__ == "__main__":
-    collect_landmarks_with_webcam()
+    _collect_landmarks_with_webcam()
