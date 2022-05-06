@@ -1,5 +1,5 @@
 """
-Data collection.
+Landmark data collection.
 """
 import os
 import time
