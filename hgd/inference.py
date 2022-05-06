@@ -8,8 +8,7 @@ from tensorflow.keras.models import Model  # pylint: disable=import-error,no-nam
 
 from hgd._video import video_to_landmarks
 from hgd.config import Config
-from hgd.data import NDFloat32Array, preprocess
-from hgd.model import make_model
+from hgd.model import make_model, preprocess, NDFloat32Array
 
 
 def postprocess(

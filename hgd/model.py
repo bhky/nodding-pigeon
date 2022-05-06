@@ -2,14 +2,18 @@
 Model utilities.
 """
 import os
-from typing import Optional
+from typing import Optional, Sequence
 
+import numpy as np
+import numpy.typing
 import tensorflow as tf
 from tensorflow.keras import layers  # pylint: disable=import-error
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from hgd.config import Config
 from hgd._download import download_weights_to, get_default_weights_path
+
+NDFloat32Array = np.typing.NDArray[np.float32]
 
 
 def make_model(weights_path: Optional[str] = get_default_weights_path()) -> Model:
@@ -37,3 +41,22 @@ def make_model(weights_path: Optional[str] = get_default_weights_path()) -> Mode
         model.load_weights(weights_path)
 
     return model
+
+
+def preprocess(landmarks: Sequence[Sequence[float]]) -> NDFloat32Array:
+    features = np.array(landmarks)
+
+    # Make the landmarks relative to the face box.
+    features[:, 4:10] = (features[:, 4:10] - features[:, 0:1]) / features[:, 2:3]
+    features[:, 10:] = (features[:, 10:] - features[:, 1:2]) / features[:, 3:4]
+
+    # Add stddev features.
+    xs_coord_std = np.std(features[:, 4:10], axis=1, keepdims=True)
+    ys_coord_std = np.std(features[:, 10:], axis=1, keepdims=True)
+    features = np.concatenate([features, xs_coord_std, ys_coord_std], axis=1)
+
+    # Drop face boxes.
+    features = np.delete(features, [0, 1, 2, 3], axis=1)
+
+    assert features.shape[1] == Config.num_features
+    return features

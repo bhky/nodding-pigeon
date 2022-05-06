@@ -10,8 +10,8 @@ from tensorflow.keras import losses
 from tensorflow.keras.models import Model
 
 from hgd.config import Config
-from hgd.data import NDFloat32Array, load_landmarks, preprocess
-from hgd.model import make_model
+from hgd.data import load_landmarks
+from hgd.model import make_model, preprocess, NDFloat32Array
 
 tf.random.set_seed(0)
 
