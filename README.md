@@ -21,27 +21,27 @@ cd head-gesture-detection
 python3 -m pip install .
 ```
 
-# Quick test
+# Usage
 
-An easy way to try out this library and the pre-trained model is to
+An easy way to try this library and the pre-trained model is to
 make a short video with your head gesture.
 
 The code snippet below will perform the following:
 - Start webcam.
-- End webcam when the needed number of frames has been collected (e.g., 60 frames).
+- Collect the needed number of frames (default `60`) for the model.
+- End webcam automatically (or you can press `q` to end earlier).
 - Make prediction of your head gesture and print the result to STDOUT.
 ```python
 from hgd.inference import predict_video
 # By default, the following call will download the pre-trained model weights 
-# and start your webcam. You can press "q" to end recording before the auto end.
-# The result is a dictionary.
+# and start your webcam. The result is a dictionary.
 result = predict_video()
 print(result)
 
 # Alternatively, you could provide a pre-recorded video file:
 result = predict_video("your_head_gesture_video.mp4", from_beginning=False)
 # The `from_beginning` flag controls whether the needed frames will be obtained
-# from the beginning or toward the end of your provided video.
+# from the beginning or toward the end of the video.
 ```
 Result format:
 ```text
@@ -67,7 +67,7 @@ The following `gesture` types are available:
 
 To determine the final `gesture`:
 - If the `has_motion` probability is smaller than a threshold (default `0.5`),
-  `gesture` is `stationary`.
+  `gesture` is `stationary`. Other probabilities are irrelevant.
 - Otherwise, we will look for the largest probability from `gestures`:
   - If it is smaller than another threshold (default `0.9`), `gesture` is `undefined`,
   - else, the corresponding gesture label is selected (e.g., `nodding`).
