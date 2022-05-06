@@ -2,7 +2,7 @@
 Model utilities.
 """
 import os
-from typing import Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import numpy as np
 import numpy.typing
@@ -41,6 +41,11 @@ def make_model(weights_path: Optional[str] = get_default_weights_path()) -> Mode
         model.load_weights(weights_path)
 
     return model
+
+
+def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
+    loaded = np.load(npz_path)
+    return {label: loaded[label].tolist() for label in loaded.files}
 
 
 def preprocess(landmarks: Sequence[Sequence[float]]) -> NDFloat32Array:

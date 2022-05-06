@@ -1,19 +1,15 @@
 """
-Data utilities.
+Data collection.
 """
 import os
 import time
-from typing import Dict, List, Sequence
+from typing import Sequence
 
 import numpy as np
 
 from hgd._video import video_to_landmarks
 from hgd.config import Config
-
-
-def load_landmarks(npz_path: str) -> Dict[str, List[List[float]]]:
-    loaded = np.load(npz_path)
-    return {label: loaded[label].tolist() for label in loaded.files}
+from hgd.model import load_landmarks
 
 
 def _collect_landmarks_with_webcam(
