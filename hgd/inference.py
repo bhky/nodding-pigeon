@@ -1,7 +1,7 @@
 """
 Inference utilities.
 """
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, Optional, Sequence
 
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
@@ -43,8 +43,9 @@ def predict_video(
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
         from_beginning: bool = True,
         end_padding: bool = True,
-        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess
-) -> Dict[str, Any]:
+        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess,
+        postprocess_fn: Callable[[Sequence[float]], Any] = postprocess
+) -> Any:
     if model is None:
         model = make_model()
     landmarks = video_to_landmarks(
@@ -53,7 +54,7 @@ def predict_video(
     prediction: Sequence[float] = model.predict(
         np.expand_dims(preprocess_fn(landmarks), axis=0)
     )[0].tolist()
-    return postprocess(prediction)
+    return postprocess_fn(prediction)
 
 
 # if __name__ == "__main__":
