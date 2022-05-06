@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Optional, Sequence
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
-from hgd._video import video_to_landmarks
+from hgd.video import video_to_landmarks
 from hgd.config import Config
 from hgd.model import make_model, preprocess, NDFloat32Array
 

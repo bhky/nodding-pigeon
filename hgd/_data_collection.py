@@ -7,7 +7,7 @@ from typing import Sequence
 
 import numpy as np
 
-from hgd._video import video_to_landmarks
+from hgd.video import video_to_landmarks
 from hgd.config import Config
 from hgd.model import load_landmarks
 
