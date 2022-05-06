@@ -13,7 +13,9 @@ TURNING_VIDEO_PATH = os.path.join(BASE_DIR, "head_turning.mp4")
 STATIONARY_VIDEO_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 MODEL_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 
-MODEL = load_pretrained_model(f"../training/{Config.weights_filename}")
+# For local testing only:
+# MODEL = load_pretrained_model(f"../training/{Config.weights_filename}")
+MODEL = load_pretrained_model()
 
 
 def predict_gesture(video_path: str) -> str:
