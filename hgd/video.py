@@ -103,6 +103,9 @@ def video_to_landmarks(
             if cv2.waitKey(1) == ord("q"):  # pylint: disable=no-member
                 break
 
+    cap.release()
+    cv2.destroyAllWindows()  # pylint: disable=no-member
+
     if not landmarks:
         return []
 
@@ -113,8 +116,6 @@ def video_to_landmarks(
         last = landmarks[-1]
         landmarks = landmarks + [last] * (max_num_frames - len(landmarks))
 
-    cap.release()
-    cv2.destroyAllWindows()  # pylint: disable=no-member
     return landmarks
 
 
