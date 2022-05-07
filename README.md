@@ -31,14 +31,15 @@ make a short video with your head gesture.
 ## Webcam
 
 The code snippet below will perform the following:
+- Search for the pre-trained weights file from `$HOME/.hgd/weights`,
+  if not exists, the file will be downloaded from this repository.
 - Start webcam.
 - Collect the needed number of frames (default `60`) for the model.
 - End webcam automatically (or you can press `q` to end earlier).
 - Make prediction of your head gesture and print the result to STDOUT.
 ```python
 from hgd.inference import predict_video
-# By default, the following call will download the pre-trained model weights 
-# and start your webcam.
+
 result = predict_video()
 print(result)
 ```
