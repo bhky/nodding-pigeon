@@ -102,8 +102,8 @@ def video_to_landmarks(
         landmarks = landmarks[-max_num_frames:]
 
     if max_num_frames and end_padding and len(landmarks) < max_num_frames:
-        zeros = [0.0] * 12
-        landmarks = landmarks + [zeros] * (max_num_frames - len(landmarks))
+        last = landmarks[-1]
+        landmarks = landmarks + [last] * (max_num_frames - len(landmarks))
 
     cap.release()
     cv2.destroyAllWindows()  # pylint: disable=no-member
