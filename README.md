@@ -28,6 +28,8 @@ python3 -m pip install .
 An easy way to try this library and the pre-trained model is to
 make a short video with your head gesture.
 
+## Webcam
+
 The code snippet below will perform the following:
 - Start webcam.
 - Collect the needed number of frames (default `60`) for the model.
@@ -36,22 +38,32 @@ The code snippet below will perform the following:
 ```python
 from hgd.inference import predict_video
 # By default, the following call will download the pre-trained model weights 
-# and start your webcam. The result is a dictionary.
+# and start your webcam.
 result = predict_video()
 print(result)
+```
 
-# Alternatively, you could provide a pre-recorded video file:
+## Video file
+
+Alternatively, you could provide a pre-recorded video file:
+```python
+from hgd.inference import predict_video
+
 result = predict_video(
   "your_head_gesture_video.mp4",
   from_beginning=False,
-  motion_threshold=0.5,
+  motion_threshold=0.5,  # Optionally tune the thresholds.
   gesture_threshold=0.9
 )
 # The `from_beginning` flag controls whether the needed frames will be obtained
 # from the beginning or toward the end of the video.
 # Thresholds can be adjusted as needed, see explanation below.
 ```
-Result format:
+
+## Result format
+
+The result is returned as a Python dictionary.
+
 ```text
 {
   'gesture': 'turning',
