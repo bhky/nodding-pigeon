@@ -16,17 +16,18 @@ TURNING_FAKE_VIDEO_PATH = os.path.join(BASE_DIR, "head_turning_fake.mp4")
 
 MODEL_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 
+MODEL = make_model()
 # For local testing only:
 # MODEL = make_model(f"../training/{Config.weights_filename}")
-MODEL = make_model()
 
 
 def predict_gesture(video_path: str) -> str:
-    gesture = predict_video(
+    result = predict_video(
         video_path=video_path,
         model=MODEL,
         from_beginning=False
-    )["gesture"]
+    )
+    gesture = result["gesture"]
     assert isinstance(gesture, str)
     return gesture
 
