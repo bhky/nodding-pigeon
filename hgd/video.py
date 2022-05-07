@@ -38,65 +38,73 @@ def video_to_landmarks(
             frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
             result = face_detection.process(frame)
 
-            if not result or not result.detections or len(result.detections) != 1:
+            if result and result.detections and len(result.detections) == 1:
+                detection = result.detections[0]
+
+                right_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EYE)
+                left_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EYE)
+                nose_tip_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.NOSE_TIP)
+                mouth_center_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.MOUTH_CENTER)
+                right_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EAR_TRAGION)
+                left_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EAR_TRAGION)
+
+                face_box_rel = detection.location_data.relative_bounding_box
+                face_box_rel = [
+                    max(0.0, face_box_rel.xmin),
+                    max(0.0, face_box_rel.ymin),
+                    face_box_rel.width,
+                    face_box_rel.height,
+                ]
+                xs = [
+                    right_eye_rel.x,
+                    left_eye_rel.x,
+                    nose_tip_rel.x,
+                    mouth_center_rel.x,
+                    right_ear_rel.x,
+                    left_ear_rel.x,
+                ]
+                ys = [
+                    right_eye_rel.y,
+                    left_eye_rel.y,
+                    nose_tip_rel.y,
+                    mouth_center_rel.y,
+                    right_ear_rel.y,
+                    left_ear_rel.y,
+                ]
+
+                landmarks.append([*face_box_rel, *xs, *ys])
+
+                valid_frame_count += 1
+            else:
+                detection = None
+
+            if video_path != 0:
                 continue
 
-            detection = result.detections[0]
-
-            right_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EYE)
-            left_eye_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EYE)
-            nose_tip_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.NOSE_TIP)
-            mouth_center_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.MOUTH_CENTER)
-            right_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.RIGHT_EAR_TRAGION)
-            left_ear_rel = mp_face.get_key_point(detection, mp_face.FaceKeyPoint.LEFT_EAR_TRAGION)
-
-            face_box_rel = detection.location_data.relative_bounding_box
-            face_box_rel = [
-                max(0.0, face_box_rel.xmin),
-                max(0.0, face_box_rel.ymin),
-                face_box_rel.width,
-                face_box_rel.height,
-            ]
-            xs = [
-                right_eye_rel.x,
-                left_eye_rel.x,
-                nose_tip_rel.x,
-                mouth_center_rel.x,
-                right_ear_rel.x,
-                left_ear_rel.x,
-            ]
-            ys = [
-                right_eye_rel.y,
-                left_eye_rel.y,
-                nose_tip_rel.y,
-                mouth_center_rel.y,
-                right_ear_rel.y,
-                left_ear_rel.y,
-            ]
-
-            landmarks.append([*face_box_rel, *xs, *ys])
-
-            valid_frame_count += 1
-
-            if video_path == 0:
+            if detection:
                 mp_drawing.draw_detection(frame, detection)
-                flipped_frame = cv2.flip(frame, 1)  # pylint: disable=no-member
 
-                text = f"{valid_frame_count} / {max_num_frames}" \
-                    if max_num_frames else str(valid_frame_count)
-                cv2.putText(  # pylint: disable=no-member
-                    flipped_frame, text, (10, 20),
-                    cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
-                    font_scale, (0, 0, 255),
-                    line_thickness, cv2.LINE_AA  # pylint: disable=no-member
-                )
-                cv2.imshow(  # pylint: disable=no-member
-                    "Webcam",
-                    cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
-                )
+            flipped_frame = cv2.flip(frame, 1)  # pylint: disable=no-member
 
-                if cv2.waitKey(1) == ord("q"):  # pylint: disable=no-member
-                    break
+            text = f"{valid_frame_count} / {max_num_frames}" \
+                if max_num_frames else str(valid_frame_count)
+            cv2.putText(  # pylint: disable=no-member
+                flipped_frame, text, (10, 20),
+                cv2.FONT_HERSHEY_SIMPLEX,  # pylint: disable=no-member
+                font_scale, (0, 0, 255),
+                line_thickness, cv2.LINE_AA  # pylint: disable=no-member
+            )
+
+            cv2.imshow(  # pylint: disable=no-member
+                "Webcam",
+                cv2.cvtColor(flipped_frame, cv2.COLOR_RGB2BGR)  # pylint: disable=no-member
+            )
+
+            if cv2.waitKey(1) == ord("q"):  # pylint: disable=no-member
+                break
+
+    if not landmarks:
+        return []
 
     if max_num_frames and not from_beginning:
         landmarks = landmarks[-max_num_frames:]

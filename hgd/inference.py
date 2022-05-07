@@ -1,6 +1,7 @@
 """
 Inference utilities.
 """
+from dataclasses import asdict, dataclass
 from typing import Any, Callable, Dict, Optional, Sequence
 
 import numpy as np
@@ -11,11 +12,20 @@ from hgd.config import Config
 from hgd.model import make_model, preprocess, NDFloat32Array
 
 
+@dataclass
+class Result:
+    gesture: str
+    probabilities: Dict[str, Any]
+
+
 def postprocess(
         prediction: Sequence[float],
         motion_threshold: float,
         gesture_threshold: float
 ) -> Dict[str, Any]:
+    if not prediction:
+        return asdict(Result(Config.undefined_gesture_label, {}))
+
     gesture_probs = prediction[1:]
     if prediction[0] < motion_threshold:
         label = Config.stationary_label
@@ -24,16 +34,17 @@ def postprocess(
             label = Config.undefined_gesture_label
         else:
             label = Config.gesture_labels[int(np.argmax(gesture_probs))]
-    return {
-        "gesture": label,
-        "probabilities": {
+    result = Result(
+        gesture=label,
+        probabilities={
             "has_motion": prediction[0],
             "gestures": {
                 Config.gesture_labels[i]: gesture_probs[i]
                 for i in range(len(Config.gesture_labels))
             }
         }
-    }
+    )
+    return asdict(result)
 
 
 def predict_video(
@@ -52,9 +63,14 @@ def predict_video(
     landmarks = video_to_landmarks(
         video_path, max_num_frames, from_beginning, end_padding
     )
-    prediction: Sequence[float] = model.predict(
-        np.expand_dims(preprocess_fn(landmarks), axis=0)
-    )[0].tolist()
+
+    if landmarks:
+        prediction: Sequence[float] = model.predict(
+            np.expand_dims(preprocess_fn(landmarks), axis=0)
+        )[0].tolist()
+    else:
+        prediction = []
+
     if not postprocessing:
         return prediction
     return postprocess(prediction, motion_threshold, gesture_threshold)
