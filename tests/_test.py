@@ -12,6 +12,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NODDING_VIDEO_PATH = os.path.join(BASE_DIR, "head_nodding.mp4")
 TURNING_VIDEO_PATH = os.path.join(BASE_DIR, "head_turning.mp4")
 STATIONARY_VIDEO_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
+TURNING_FAKE_VIDEO_PATH = os.path.join(BASE_DIR, "head_turning_fake.mp4")
+
 MODEL_PATH = os.path.join(BASE_DIR, "head_stationary.mp4")
 
 # For local testing only:
@@ -41,6 +43,11 @@ class TestModel(unittest.TestCase):
 
     def test_stationary(self):
         gesture = predict_gesture(STATIONARY_VIDEO_PATH)
+        self.assertEqual(Config.stationary_label, gesture)
+
+    @unittest.skip("Not working yet.")
+    def test_turning_fake(self):
+        gesture = predict_gesture(TURNING_FAKE_VIDEO_PATH)
         self.assertEqual(Config.stationary_label, gesture)
 
 
