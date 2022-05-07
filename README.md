@@ -39,9 +39,15 @@ result = predict_video()
 print(result)
 
 # Alternatively, you could provide a pre-recorded video file:
-result = predict_video("your_head_gesture_video.mp4", from_beginning=False)
+result = predict_video(
+  "your_head_gesture_video.mp4",
+  from_beginning=False,
+  motion_threshold=0.5,
+  gesture_threshold=0.9
+)
 # The `from_beginning` flag controls whether the needed frames will be obtained
 # from the beginning or toward the end of the video.
+# Thresholds can be adjusted as needed, see explanation below.
 ```
 Result format:
 ```text
@@ -66,8 +72,8 @@ The following `gesture` types are available:
 - `undefined` - Unrecognised gesture.
 
 To determine the final `gesture`:
-- If the `has_motion` probability is smaller than a threshold (default `0.5`),
+- If `has_motion` probability is smaller than `motion_threshold` (default `0.5`),
   `gesture` is `stationary`. Other probabilities are irrelevant.
 - Otherwise, we will look for the largest probability from `gestures`:
-  - If it is smaller than another threshold (default `0.9`), `gesture` is `undefined`,
+  - If it is smaller than `gesture_threshold` (default `0.9`), `gesture` is `undefined`,
   - else, the corresponding gesture label is selected (e.g., `nodding`).
