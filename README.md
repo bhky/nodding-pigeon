@@ -83,7 +83,7 @@ The following `gesture` types are available:
 - `nodding` - Repeatedly tilt your head upward and downward.
 - `turning` - Repeatedly turn your head leftward and rightward.
 - `stationary` - Not tilting or turning your head; translation motion is still treated as stationary.
-- `undefined` - Unrecognised gesture.
+- `undefined` - Unrecognised gesture or no landmarks detected (usually means no face is shown).
 
 To determine the final `gesture`:
 - If `has_motion` probability is smaller than `motion_threshold` (default `0.5`),
@@ -91,3 +91,5 @@ To determine the final `gesture`:
 - Otherwise, we will look for the largest probability from `gestures`:
   - If it is smaller than `gesture_threshold` (default `0.9`), `gesture` is `undefined`,
   - else, the corresponding gesture label is selected (e.g., `nodding`).
+- If no landmarks are detected in the video, `gesture` is `undefined`. 
+  The `probabilities` dictionary is empty.
