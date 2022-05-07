@@ -88,10 +88,12 @@ class CustomAccuracy(tf.keras.metrics.Metric):
     def __init__(
             self,
             motion_threshold: float = 0.5,
+            gesture_threshold: float = 0.9,
             name: str = "custom_accuracy"
     ) -> None:
         super(CustomAccuracy, self).__init__(name=name)
-        self.threshold = motion_threshold
+        self.motion_threshold = motion_threshold
+        self.gesture_threshold = gesture_threshold
         self.acc = tf.keras.metrics.CategoricalAccuracy()
 
     def update_state(
@@ -102,7 +104,8 @@ class CustomAccuracy(tf.keras.metrics.Metric):
     ) -> None:
         # IMPORTANT - the sample_weight parameter is needed to solve:
         # TypeError: tf__update_state() got an unexpected keyword argument 'sample_weight'
-        y_pred = tf.where(y_pred[:, :1] >= self.threshold, y_pred, 0.0)
+        y_pred = tf.where(y_pred[:, :1] >= self.motion_threshold, y_pred, 0.0)
+        y_pred = tf.where(y_pred >= self.gesture_threshold, 1.0, 0.0)
         self.acc.update_state(y_true[:, 1:], y_pred[:, 1:])
 
     def result(self) -> tf.Tensor:
