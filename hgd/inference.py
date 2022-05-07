@@ -13,8 +13,8 @@ from hgd.model import make_model, preprocess, NDFloat32Array
 
 def postprocess(
         prediction: Sequence[float],
-        motion_threshold: float = 0.5,
-        gesture_threshold: float = 0.9
+        motion_threshold: float,
+        gesture_threshold: float
 ) -> Dict[str, Any]:
     gesture_probs = prediction[1:]
     if prediction[0] < motion_threshold:
@@ -43,7 +43,9 @@ def predict_video(
         from_beginning: bool = True,
         end_padding: bool = True,
         preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess,
-        postprocess_fn: Callable[[Sequence[float]], Any] = postprocess
+        postprocessing: bool = True,
+        motion_threshold: float = 0.5,
+        gesture_threshold: float = 0.9
 ) -> Any:
     if model is None:
         model = make_model()
@@ -53,7 +55,9 @@ def predict_video(
     prediction: Sequence[float] = model.predict(
         np.expand_dims(preprocess_fn(landmarks), axis=0)
     )[0].tolist()
-    return postprocess_fn(prediction)
+    if not postprocessing:
+        return prediction
+    return postprocess(prediction, motion_threshold, gesture_threshold)
 
 
 # if __name__ == "__main__":
