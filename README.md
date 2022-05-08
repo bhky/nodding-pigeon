@@ -6,7 +6,7 @@
 The Head Gesture Detection (HGD) library provides a pre-trained model and 
 a simple inference API for detecting head gestures in short videos.
 Under the hood, it uses Google [MediaPipe](https://google.github.io/mediapipe/)
-for collecting landmark features required by the model.
+for collecting the landmark features.
 
 # Installation
 
