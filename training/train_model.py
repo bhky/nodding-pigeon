@@ -16,10 +16,15 @@ tf.random.set_seed(0)
 
 
 def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
-    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-    # Strategy for GPU or multi-GPU machines.
-    strategy = tf.distribute.MirroredStrategy()
-    print(f"Number of accelerators: {strategy.num_replicas_in_sync}")
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+    gpu_devices = tf.config.list_physical_devices("GPU")
+    if gpu_devices:
+        # Strategy for GPU or multi-GPU machines.
+        strategy = tf.distribute.MirroredStrategy()
+        print(f"Number of accelerators: {strategy.num_replicas_in_sync}")
+    else:
+        strategy = tf.distribute.OneDeviceStrategy("/cpu:0")
+        print("Using single CPU.")
     return strategy
 
 
