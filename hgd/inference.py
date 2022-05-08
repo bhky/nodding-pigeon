@@ -2,14 +2,14 @@
 Inference utilities.
 """
 from dataclasses import asdict, dataclass
-from typing import Any, Callable, Dict, Optional, Sequence
+from typing import Any, Dict, Optional, Sequence
 
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from hgd.video import video_to_landmarks
 from hgd.config import Config
-from hgd.model import make_model, preprocess, NDFloat32Array
+from hgd.model import make_model
 
 
 @dataclass
@@ -53,7 +53,6 @@ def predict_video(
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
         from_beginning: bool = True,
         end_padding: bool = True,
-        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess,
         postprocessing: bool = True,
         motion_threshold: float = 0.5,
         gesture_threshold: float = 0.9
@@ -66,7 +65,7 @@ def predict_video(
 
     if landmarks:
         prediction: Sequence[float] = model.predict(
-            np.expand_dims(preprocess_fn(landmarks), axis=0)
+            np.expand_dims(landmarks, axis=0)
         )[0].tolist()
     else:
         prediction = []

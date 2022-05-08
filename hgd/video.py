@@ -72,7 +72,9 @@ def video_to_landmarks(
                     left_ear_rel.y,
                 ]
 
-                landmarks.append([*face_box_rel, *xs, *ys])
+                features = [*face_box_rel, *xs, *ys]
+                assert len(features) == Config.num_original_features
+                landmarks.append(features)
 
                 valid_frame_count += 1
             else:

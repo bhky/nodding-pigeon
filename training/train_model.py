@@ -2,7 +2,7 @@
 Train model for classifying landmark movements.
 """
 import os
-from typing import Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -10,7 +10,7 @@ from tensorflow.keras import losses
 from tensorflow.keras.models import Model
 
 from hgd.config import Config
-from hgd.model import load_landmarks, make_model, preprocess, NDFloat32Array
+from hgd.model import load_landmarks, make_model
 
 tf.random.set_seed(0)
 
@@ -27,7 +27,6 @@ def make_ds_train(
         landmark_dict: Dict[str, Sequence[Sequence[float]]],
         seq_length: int,
         num_features: int,
-        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array],
         seed: int
 ) -> tf.data.Dataset:
     # Note: stationary label must come first in this design, see make_y.
@@ -50,7 +49,7 @@ def make_ds_train(
             label_idx = int(rng.integers(len(labels), size=1))
             landmarks = landmark_dict[labels[label_idx]]
             seq_idx = int(rng.integers(len(landmarks) - seq_length, size=1))
-            features = preprocess_fn(landmarks[seq_idx: seq_idx + seq_length])
+            features = landmarks[seq_idx: seq_idx + seq_length]
             yield features, make_y(label_idx)
 
     return tf.data.Dataset.from_generator(
@@ -127,12 +126,10 @@ def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
         weights_path: str,
-        preprocess_fn: Callable[[Sequence[Sequence[float]]], NDFloat32Array] = preprocess,
         seed: int = 42
 ) -> None:
     ds_train = make_ds_train(
-        landmark_dict, Config.seq_length, Config.num_features,
-        preprocess_fn, seed
+        landmark_dict, Config.seq_length, Config.num_original_features, seed
     )
     ds_train = ds_train.batch(16).prefetch(tf.data.AUTOTUNE)
 
