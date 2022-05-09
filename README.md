@@ -31,7 +31,7 @@ make a short video with your head gesture.
 ## Webcam
 
 The code snippet below will perform the following:
-- Search for the pre-trained weights file from `$HOME/.hgd/weights`,
+- Search for the pre-trained weights file from `$HOME/.hgd/weights/`,
   if not exists, the file will be downloaded from this repository.
 - Start webcam.
 - Collect the needed number of frames (default `60`) for the model.
