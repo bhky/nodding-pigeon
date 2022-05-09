@@ -4,9 +4,9 @@ Unit test.
 import os
 import unittest
 
-from hgd.config import Config
-from hgd.inference import predict_video
-from hgd.model import make_model
+from noddingpigeon.config import Config
+from noddingpigeon.inference import predict_video
+from noddingpigeon.model import make_model
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NODDING_VIDEO_PATH = os.path.join(BASE_DIR, "head_nodding.mp4")

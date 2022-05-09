@@ -8,7 +8,7 @@ import numpy as np
 from mediapipe.python.solutions import drawing_utils as mp_drawing
 from mediapipe.python.solutions import face_detection as mp_face
 
-from hgd.config import Config
+from noddingpigeon.config import Config
 
 
 def video_to_landmarks(

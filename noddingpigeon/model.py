@@ -9,8 +9,8 @@ import tensorflow as tf
 from tensorflow.keras import layers  # pylint: disable=import-error
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
-from hgd.config import Config
-from hgd._download import download_weights_to, get_default_weights_path
+from noddingpigeon.config import Config
+from noddingpigeon._download import download_weights_to, get_default_weights_path
 
 
 def make_model(weights_path: Optional[str] = get_default_weights_path()) -> Model:

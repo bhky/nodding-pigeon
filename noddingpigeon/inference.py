@@ -7,9 +7,9 @@ from typing import Any, Dict, Optional, Sequence
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
-from hgd.video import video_to_landmarks
-from hgd.config import Config
-from hgd.model import make_model
+from noddingpigeon.video import video_to_landmarks
+from noddingpigeon.config import Config
+from noddingpigeon.model import make_model
 
 
 @dataclass

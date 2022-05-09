@@ -9,8 +9,8 @@ import tensorflow as tf
 from tensorflow.keras import losses
 from tensorflow.keras.models import Model
 
-from hgd.config import Config
-from hgd.model import load_landmarks, make_model
+from noddingpigeon.config import Config
+from noddingpigeon.model import load_landmarks, make_model
 
 tf.random.set_seed(0)
 

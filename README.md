@@ -1,10 +1,11 @@
-[![ci](https://github.com/bhky/head-gesture-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/bhky/head-gesture-detection/actions)
+[![ci](https://github.com/bhky/nodding-pigeon/actions/workflows/ci.yml/badge.svg)](https://github.com/bhky/nodding-pigeon/actions)
 [![License MIT 1.0](https://img.shields.io/badge/license-MIT%201.0-blue.svg)](LICENSE)
 
 # Introduction
 
-The Head Gesture Detection (HGD) library provides a pre-trained model and 
-a simple inference API for detecting head gestures in short videos.
+The **Nodding Pigeon: Head Gesture Detection** library provides 
+a pre-trained model and a simple inference API for detecting head gestures 
+in short videos.
 Under the hood, it uses Google [MediaPipe](https://google.github.io/mediapipe/)
 for collecting the landmark features.
 
@@ -12,14 +13,14 @@ for collecting the landmark features.
 
 Tested for Python 3.8, 3.9, and 3.10.
 
-The best way to install HGD with its dependencies is from PyPI:
+The best way to install this library with its dependencies is from PyPI:
 ```shell
-python3 -m pip install --upgrade hgd
+python3 -m pip install --upgrade noddingpigeon
 ```
 Alternatively, to obtain the latest version from this repository:
 ```shell
-git clone git@github.com:bhky/head-gesture-detection.git
-cd head-gesture-detection
+git clone git@github.com:bhky/nodding-pigeon.git
+cd nodding-pigeon
 python3 -m pip install .
 ```
 
@@ -31,14 +32,14 @@ make a short video with your head gesture.
 ## Webcam
 
 The code snippet below will perform the following:
-- Search for the pre-trained weights file from `$HOME/.hgd/weights/`,
+- Search for the pre-trained weights file from `$HOME/.noddingpigeon/weights/`,
   if not exists, the file will be downloaded from this repository.
 - Start webcam.
 - Collect the needed number of frames (default `60`) for the model.
 - End webcam automatically (or you can press `q` to end earlier).
 - Make prediction of your head gesture and print the result to STDOUT.
 ```python
-from hgd.inference import predict_video
+from noddingpigeon.inference import predict_video
 
 result = predict_video()
 print(result)
@@ -48,7 +49,7 @@ print(result)
 
 Alternatively, you could provide a pre-recorded video file:
 ```python
-from hgd.inference import predict_video
+from noddingpigeon.inference import predict_video
 
 result = predict_video(
   "your_head_gesture_video.mp4",

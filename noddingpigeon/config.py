@@ -4,7 +4,7 @@ Config.
 from dataclasses import dataclass
 from typing import Tuple
 
-from hgd import __weights_version__
+from noddingpigeon import __weights_version__
 
 
 @dataclass
