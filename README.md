@@ -42,6 +42,11 @@ from noddingpigeon.inference import predict_video
 
 result = predict_video()
 print(result)
+# Example result:
+# {'gesture': 'nodding',
+#  'probabilities': {'has_motion': 1.0,
+#   'gestures': {'nodding': 0.9576354622840881,
+#    'turning': 0.042364541441202164}}}
 ```
 
 ## Video file
@@ -52,14 +57,17 @@ from noddingpigeon.inference import predict_video
 
 result = predict_video(
   "your_head_gesture_video.mp4",
-  from_beginning=False,
-  motion_threshold=0.5,  # Optionally tune the thresholds.
+  from_beginning=False,  # Optionally change these parameters.
+  motion_threshold=0.5,
   gesture_threshold=0.9
 )
-# The `from_beginning` flag controls whether the needed frames will be obtained
-# from the beginning or toward the end of the video.
-# Thresholds can be adjusted as needed, see explanation below.
 ```
+Note that no matter how long your video is, only the
+pre-defined number of frames (`60` for the current model) will be used for
+prediction. The `from_beginning` flag controls whether the needed frames 
+will be obtained from the beginning or toward the end of the video. 
+
+Thresholds can be adjusted as needed, see explanation in a later section.
 
 ## Result format
 
