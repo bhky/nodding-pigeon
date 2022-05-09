@@ -105,3 +105,62 @@ To determine the final `gesture`:
   - else, the corresponding gesture label is selected (e.g., `nodding`).
 - If no landmarks are detected in the video, `gesture` is `undefined`. 
   The `probabilities` dictionary is empty.
+
+# API
+
+## `noddingpigeon.inference`
+
+### `predict_video`
+Detect head gesture shown in the input video either from webcam or file.
+- Parameters:
+  - `video_path` (`Optional[str]`, default `None`): 
+    File path to the video file, or `None` for starting a webcam.
+  - `model` (`Optional[tf.keras.Model]`, default `None`): 
+    A TensorFlow-Keras model instance, or `None` for using the default model.
+  - `max_num_frames` (`int`, default `60`):
+    Maximum number of frames to be processed by the model.
+    Do not change when using the default model.    
+  - `video_segment` (`VideoSegment` enum, default `VideoSegment.BEGINNING`):
+    See explanation of [`VideoSegment`](#videosegment).
+  - `end_padding` (`bool`, default `True`): 
+    If `True` and `max_num_frames` is set, when the input video has not enough
+    frames to form the feature tensor for the model, padding at the end will be 
+    done using the features detected on the last frame.
+  - `drop_consecutive_duplicates` (`bool`, default `True`):
+    If `True`, features from a certain frame will not be used to form the 
+    feature tensor if they are considered to be the same as the previous frame.
+    This is a mechanism to prevent "fake" video created with static images.
+  - `postprocessing` (`bool`, default `True`):
+    If `True`, the final result will be presented as the Python dictionary
+    described in the [usage](#usage) section, otherwise the raw model output
+    is returned.
+  - `motion_threshold` (`float`, default `0.5`):
+    See the [head gestures](#head-gestures) section.
+  - `gesture_threshold` (`float`, default `0.9`):
+    See the [head gestures](#head-gestures) section.
+- Return:
+  - A Python dictionary if `postprocessing` is `True`, otherwise `List[float]`
+    from the model output.
+
+## `noddingpigeon.video`
+
+### `VideoSegment`
+Enum class for video segment options.
+- `VideoSegment.BEGINNING`: Collect the required frames for the model from the beginning of the video.
+- `VideoSegment.LAST`: Collect the required frames for the model toward the end of the video.
+
+## `noddingpigeon.model`
+
+### `make_model`
+Create an instance of the model used in this library, 
+optionally with pre-trained weights loaded.
+- Parameters:
+  - `weights_path` (`Optional[str]`, default `$HOME/.noddingpigeon/weights/*.h5`): 
+    Path to the weights in HDF5 format to be loaded by the model. 
+    The weights file will be downloaded if not exists.
+    If `None`, no weights will be downloaded nor loaded to the model.
+    Users can provide path if the default is not preferred. 
+    The environment variable `NODDING_PIGEON_HOME` can also be used to indicate
+    where the `.noddingpigeon/` directory should be located.
+- Return:
+  - `tf.keras.Model` object.
