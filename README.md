@@ -52,20 +52,23 @@ print(result)
 ## Video file
 
 Alternatively, you could provide a pre-recorded video file:
+
 ```python
 from noddingpigeon.inference import predict_video
+from noddingpigeon.video import VideoSegment
 
 result = predict_video(
   "your_head_gesture_video.mp4",
-  from_beginning=False,  # Optionally change these parameters.
+  video_segment=VideoSegment.LAST,  # Optionally change these parameters.
   motion_threshold=0.5,
   gesture_threshold=0.9
 )
 ```
 Note that no matter how long your video is, only the
-pre-defined number of frames (`60` for the current model) will be used for
-prediction. The `from_beginning` flag controls whether the needed frames 
-will be obtained from the beginning or toward the end of the video. 
+pre-defined number of frames (`60` for the current model) are used for
+prediction. The `video_segment` enum option controls how the frames 
+are obtained from the video, 
+e.g., `VideoSegment.LAST` means the last (`60`) frames will be used.
 
 Thresholds can be adjusted as needed, see explanation in a later section.
 

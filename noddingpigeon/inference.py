@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional, Sequence
 import numpy as np
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
-from noddingpigeon.video import video_to_landmarks
+from noddingpigeon.video import video_to_landmarks, VideoSegment
 from noddingpigeon.config import Config
 from noddingpigeon.model import make_model
 
@@ -51,7 +51,7 @@ def predict_video(
         video_path: Optional[str] = None,  # None will start a webcam.
         model: Optional[Model] = None,
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
-        from_beginning: bool = True,
+        video_segment: VideoSegment = VideoSegment.BEGINNING,
         end_padding: bool = True,
         drop_consecutive_duplicates: bool = True,
         postprocessing: bool = True,
@@ -61,7 +61,7 @@ def predict_video(
     if model is None:
         model = make_model()
     landmarks = video_to_landmarks(
-        video_path, max_num_frames, from_beginning, end_padding,
+        video_path, max_num_frames, video_segment, end_padding,
         drop_consecutive_duplicates
     )
 

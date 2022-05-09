@@ -7,6 +7,7 @@ import unittest
 from noddingpigeon.config import Config
 from noddingpigeon.inference import predict_video
 from noddingpigeon.model import make_model
+from noddingpigeon.video import VideoSegment
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 NODDING_VIDEO_PATH = os.path.join(BASE_DIR, "head_nodding.mp4")
@@ -25,7 +26,7 @@ def predict_gesture(video_path: str) -> str:
     result = predict_video(
         video_path=video_path,
         model=MODEL,
-        from_beginning=False
+        video_segment=VideoSegment.LAST
     )
     gesture = result["gesture"]
     assert isinstance(gesture, str)

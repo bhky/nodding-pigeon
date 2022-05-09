@@ -1,6 +1,7 @@
 """
 Video utilities.
 """
+from enum import auto, Enum
 from typing import List, Optional, Union
 
 import cv2
@@ -11,13 +12,19 @@ from mediapipe.python.solutions import face_detection as mp_face
 from noddingpigeon.config import Config
 
 
+class VideoSegment(Enum):
+    BEGINNING = auto()
+    LAST = auto()
+
+
 def video_to_landmarks(
         video_path: Optional[Union[int, str]],
         max_num_frames: Optional[int] = Config.seq_length,
-        from_beginning: bool = True,
+        video_segment: VideoSegment = VideoSegment.BEGINNING,
         end_padding: bool = True,
         drop_consecutive_duplicates: bool = False
 ) -> List[List[float]]:
+    assert video_segment in VideoSegment
     video_path = video_path if video_path else 0  # For 0, webcam will be used.
     font_scale = 0.6
     line_thickness = 1
@@ -35,7 +42,8 @@ def video_to_landmarks(
                 if video_path == 0:
                     continue  # Ignore empty frame of webcam.
                 break  # End of given video.
-            if max_num_frames and from_beginning and valid_frame_count >= max_num_frames:
+            if max_num_frames and video_segment == VideoSegment.BEGINNING \
+                    and valid_frame_count >= max_num_frames:
                 break
 
             frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)  # pylint: disable=no-member
@@ -122,7 +130,7 @@ def video_to_landmarks(
     if not landmarks:
         return []
 
-    if max_num_frames and not from_beginning:
+    if max_num_frames and video_segment == VideoSegment.LAST:
         landmarks = landmarks[-max_num_frames:]
 
     if max_num_frames and end_padding and len(landmarks) < max_num_frames:
