@@ -55,7 +55,7 @@ Alternatively, you could provide a pre-recorded video file:
 
 ```python
 from noddingpigeon.inference import predict_video
-from noddingpigeon.video import VideoSegment
+from noddingpigeon.video import VideoSegment  # Optional.
 
 result = predict_video(
   "your_head_gesture_video.mp4",
@@ -70,7 +70,8 @@ prediction. The `video_segment` enum option controls how the frames
 are obtained from the video, 
 e.g., `VideoSegment.LAST` means the last (`60`) frames will be used.
 
-Thresholds can be adjusted as needed, see explanation in a later section.
+Thresholds can be adjusted as needed, see explanation in the 
+[head gestures](#head-gestures) section.
 
 ## Result format
 
