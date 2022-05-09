@@ -15,4 +15,4 @@ class Config:
     npz_filename: str = "landmarks.npz"
     seq_length: int = 60
     num_original_features: int = 16
-    weights_filename: str = f"hgd_weights_v{__weights_version__}.h5"
+    weights_filename: str = f"head_gesture_weights_v{__weights_version__}.h5"
