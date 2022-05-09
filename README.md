@@ -3,9 +3,8 @@
 
 # Introduction
 
-The **Nodding Pigeon: Head Gesture Detection** library provides 
-a pre-trained model and a simple inference API for detecting head gestures 
-in short videos.
+The **Nodding Pigeon** library provides a pre-trained model and 
+a simple inference API for detecting **head gestures** in short videos.
 Under the hood, it uses Google [MediaPipe](https://google.github.io/mediapipe/)
 for collecting the landmark features.
 
@@ -26,7 +25,7 @@ python3 -m pip install .
 
 # Usage
 
-An easy way to try this library and the pre-trained model is to
+An easy way to try the API and the pre-trained model is to
 make a short video with your head gesture.
 
 ## Webcam
