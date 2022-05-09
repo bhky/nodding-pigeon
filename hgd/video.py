@@ -4,6 +4,7 @@ Video utilities.
 from typing import List, Optional, Union
 
 import cv2
+import numpy as np
 from mediapipe.python.solutions import drawing_utils as mp_drawing
 from mediapipe.python.solutions import face_detection as mp_face
 
@@ -14,13 +15,15 @@ def video_to_landmarks(
         video_path: Optional[Union[int, str]],
         max_num_frames: Optional[int] = Config.seq_length,
         from_beginning: bool = True,
-        end_padding: bool = True
+        end_padding: bool = True,
+        drop_consecutive_duplicates: bool = False
 ) -> List[List[float]]:
     video_path = video_path if video_path else 0  # For 0, webcam will be used.
     font_scale = 0.6
     line_thickness = 1
 
     valid_frame_count = 0
+    prev_features: List[float] = []
     landmarks: List[List[float]] = []
     cap = cv2.VideoCapture(video_path)  # pylint: disable=no-member
     with mp_face.FaceDetection(model_selection=0,
@@ -74,7 +77,15 @@ def video_to_landmarks(
 
                 features = [*face_box_rel, *xs, *ys]
                 assert len(features) == Config.num_original_features
+
+                if drop_consecutive_duplicates and np.array_equal(
+                        np.round(features, decimals=2),
+                        np.round(prev_features, decimals=2)
+                ):
+                    continue
+
                 landmarks.append(features)
+                prev_features = features
 
                 valid_frame_count += 1
             else:

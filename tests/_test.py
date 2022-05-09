@@ -46,7 +46,6 @@ class TestModel(unittest.TestCase):
         gesture = predict_gesture(STATIONARY_VIDEO_PATH)
         self.assertEqual(Config.stationary_label, gesture)
 
-    @unittest.skip("Not working yet.")
     def test_turning_fake(self):
         gesture = predict_gesture(TURNING_FAKE_VIDEO_PATH)
         self.assertEqual(Config.stationary_label, gesture)

@@ -53,6 +53,7 @@ def predict_video(
         max_num_frames: int = Config.seq_length,  # For the pre-trained model.
         from_beginning: bool = True,
         end_padding: bool = True,
+        drop_consecutive_duplicates: bool = True,
         postprocessing: bool = True,
         motion_threshold: float = 0.5,
         gesture_threshold: float = 0.9
@@ -60,7 +61,8 @@ def predict_video(
     if model is None:
         model = make_model()
     landmarks = video_to_landmarks(
-        video_path, max_num_frames, from_beginning, end_padding
+        video_path, max_num_frames, from_beginning, end_padding,
+        drop_consecutive_duplicates
     )
 
     if landmarks:
