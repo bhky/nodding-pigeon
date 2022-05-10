@@ -73,7 +73,7 @@ def loss(y_true: tf.Tensor, y_pred: tf.Tensor) -> tf.Tensor:
         reduction=tf.keras.losses.Reduction.NONE
     )(has_motion_true, has_motion_pred)
 
-    # The class loss is designed in the way that, if has_motion is 0,
+    # The gesture loss is designed in the way that, if has_motion is 0,
     # the box values do not matter.
     mask = y_true[:, 0] == 1
     weight = tf.where(mask, 1.0, 0.0)
