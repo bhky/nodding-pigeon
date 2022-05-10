@@ -167,3 +167,21 @@ optionally with pre-trained weights loaded.
     where the `.noddingpigeon/` directory should be located.
 - Return:
   - `tf.keras.Model` object.
+
+# Model training
+
+Brief procedure:
+- Record a few long-ish videos: one for each head gesture done repeatedly 
+  with as many variations as possible, and one for stationary.
+- Landmark features in the videos are collected using MediaPipe.
+- During model training, random sub-sequences from the feature collection,
+  correspond to different video segments and gestures, are generated as 
+  training samples.
+- This basically means that all samples generated, in each epoch,
+  are very likely not the same as each other.
+  This serves as a good regularization as well.
+- A very simple 1D-convolutional model architecture is used to minimise
+  overfitting.
+
+For details, see the data collection and model training scripts in the
+[training](https://github.com/bhky/nodding-pigeon/tree/main/training) directory.
