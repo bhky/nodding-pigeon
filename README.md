@@ -103,7 +103,7 @@ The following `gesture` types are available:
 To determine the final `gesture`:
 - If `has_motion` probability is smaller than `motion_threshold` (default `0.5`),
   `gesture` is `stationary`. Other probabilities are irrelevant.
-- Otherwise, we will look for the largest probability from `gestures`:
+- Otherwise, the largest probability from `gestures` is considered:
   - If it is smaller than `gesture_threshold` (default `0.9`), `gesture` is `undefined`,
   - else, the corresponding gesture label is selected (e.g., `nodding`).
 - If no landmarks are detected in the video, `gesture` is `undefined`. 
