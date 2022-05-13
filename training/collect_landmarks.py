@@ -7,7 +7,7 @@ from typing import Sequence
 
 import numpy as np
 
-from noddingpigeon.video import video_to_landmarks
+from noddingpigeon.video import Feature, video_to_landmarks
 from noddingpigeon.config import Config
 from noddingpigeon.model import load_landmarks
 
@@ -27,7 +27,9 @@ def _collect_landmarks_with_webcam(
     for label in labels:
         landmark_dict[label] = video_to_landmarks(None, max_num_frames)
         time.sleep(sleep_seconds)
-    np.savez_compressed(npz_path, **landmark_dict)
+
+    feature_names = [f.name for f in Feature]
+    np.savez_compressed(npz_path, feature_names=feature_names, **landmark_dict)
 
 
 if __name__ == "__main__":

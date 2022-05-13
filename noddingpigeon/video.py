@@ -17,6 +17,25 @@ class VideoSegment(Enum):
     LAST = auto()
 
 
+class Feature(Enum):
+    X_MIN = auto()
+    Y_MIN = auto()
+    WIDTH = auto()
+    HEIGHT = auto()
+    RIGHT_EYE_X = auto()
+    LEFT_EYE_X = auto()
+    NOSE_X = auto()
+    MOUTH_X = auto()
+    RIGHT_EAR_X = auto()
+    LEFT_EAR_X = auto()
+    RIGHT_EYE_Y = auto()
+    LEFT_EYE_Y = auto()
+    NOSE_Y = auto()
+    MOUTH_Y = auto()
+    RIGHT_EAR_Y = auto()
+    LEFT_EAR_Y = auto()
+
+
 def video_to_landmarks(
         video_path: Optional[Union[int, str]],
         max_num_frames: Optional[int] = Config.seq_length,
@@ -24,6 +43,7 @@ def video_to_landmarks(
         end_padding: bool = True,
         drop_consecutive_duplicates: bool = False
 ) -> List[List[float]]:
+    assert Config.num_original_features == len(Feature)
     assert video_segment in VideoSegment
     video_path = video_path if video_path else 0  # For 0, webcam will be used.
     font_scale = 0.6
