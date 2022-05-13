@@ -28,6 +28,18 @@ def setup_accelerators_and_get_strategy() -> tf.distribute.Strategy:
     return strategy
 
 
+def make_y(label_idx: int) -> List[int]:
+    has_motion = 1 if label_idx > 0 else 0
+    y = [has_motion] + [0] * len(Config.gesture_labels)
+    if has_motion == 1:
+        y[label_idx] = 1
+    # Note:
+    # Format of y is [has_motion, <one-hot-gesture-class-vector>], e.g.,
+    # [1, 0, 1, ..., 0] for the 2nd gesture,
+    # [0, ..., 0] for stationary case.
+    return y
+
+
 def make_ds_train(
         landmark_dict: Dict[str, Sequence[Sequence[float]]],
         seq_length: int,
@@ -37,17 +49,6 @@ def make_ds_train(
     # Note: stationary label must come first in this design, see make_y.
     labels = (Config.stationary_label,) + Config.gesture_labels
     rng = np.random.default_rng(seed=seed)
-
-    def make_y(label_idx: int) -> List[int]:
-        has_motion = 1 if label_idx > 0 else 0
-        y = [has_motion] + [0] * len(Config.gesture_labels)
-        if has_motion == 1:
-            y[label_idx] = 1
-        # Note:
-        # Format of y is [has_motion, <one-hot-gesture-class-vector>], e.g.,
-        # [1, 0, 1, ..., 0] for the 2nd gesture,
-        # [0, ..., 0] for stationary case.
-        return y
 
     def gen() -> Tuple[List[List[float]], int]:
         while True:
