@@ -128,6 +128,15 @@ def compile_model(model: Model) -> None:
     )
 
 
+def get_steps_per_epoch(
+        landmark_dict: Dict[str, Sequence[Sequence[float]]]
+) -> int:
+    # Kind of arbitrary here.
+    mean_data_size = int(np.mean([len(v) for v in landmark_dict.values()]))
+    steps_per_epoch = int(mean_data_size * 0.7)
+    return steps_per_epoch
+
+
 def train_and_save_weights(
         landmark_dict: Dict[str, List[List[float]]],
         model: Model,
@@ -138,10 +147,6 @@ def train_and_save_weights(
         landmark_dict, Config.seq_length, Config.num_original_features, seed
     )
     ds_train = ds_train.batch(16).prefetch(tf.data.AUTOTUNE)
-
-    # Kind of arbitrary here.
-    mean_data_size = int(np.mean([len(v) for v in landmark_dict.values()]))
-    steps_per_epoch = int(mean_data_size * 0.7)
 
     callbacks = [
         tf.keras.callbacks.ModelCheckpoint(
@@ -156,7 +161,7 @@ def train_and_save_weights(
     model.fit(
         ds_train,
         epochs=500,
-        steps_per_epoch=steps_per_epoch,
+        steps_per_epoch=get_steps_per_epoch(landmark_dict),
         callbacks=callbacks,
         verbose=1,
     )
