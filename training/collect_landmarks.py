@@ -12,7 +12,7 @@ from noddingpigeon.config import Config
 from noddingpigeon.model import load_landmarks
 
 
-def _collect_landmarks_with_webcam(
+def collect_landmarks_with_webcam(
         labels: Sequence[str] = (Config.stationary_label,) + Config.gesture_labels,
         npz_path: str = Config.npz_filename,
         max_num_frames: int = 800,
@@ -33,4 +33,4 @@ def _collect_landmarks_with_webcam(
 
 
 if __name__ == "__main__":
-    _collect_landmarks_with_webcam()
+    collect_landmarks_with_webcam()
