@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers  # pylint: disable=import-error
+from tensorflow.keras import layers  # pylint: disable=import-error,no-name-in-module
 from tensorflow.keras.models import Model  # pylint: disable=import-error,no-name-in-module
 
 from noddingpigeon.config import Config
