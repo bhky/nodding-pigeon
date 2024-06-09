@@ -6,8 +6,8 @@ from typing import List, Optional, Union
 
 import cv2
 import numpy as np
-from mediapipe.python.solutions import drawing_utils as mp_drawing
-from mediapipe.python.solutions import face_detection as mp_face
+from mediapipe.python.solutions import drawing_utils as mp_drawing  # pylint: disable=no-name-in-module
+from mediapipe.python.solutions import face_detection as mp_face  # pylint: disable=no-name-in-module
 
 from noddingpigeon.config import Config
 
